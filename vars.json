@@ -1,0 +1,3 @@
+{
+   "mykey"  : "{{ lookup('file', '/home/yell/.ssh/id_ubuntuserver.pub' ) }}"
+}

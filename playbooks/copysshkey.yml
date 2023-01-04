@@ -1,0 +1,26 @@
+- hosts: myvhosts
+  name: Set authorized key taken from file
+  tasks:
+    - name: copy key
+      ansible.posix.authorized_key:
+        user: "{{ansible_user}}"
+        state: present
+        key: "{{mykey}}"
+
+- hosts: myvhosts
+  become: yes
+  tasks:
+    - name: disable Password Authentication
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication '
+        insertafter: '^#PasswordAuthentication '
+        line: PasswordAuthentication no
+
+- hosts: myvhosts
+  become: yes
+  tasks:
+  - name: Stop and Start ssh
+    service:
+      name: ssh
+      state: restarted
