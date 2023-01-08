@@ -1,0 +1,34 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars.json
+  tasks:
+  - name: Add the user {{vnginx}}
+    become: true  
+    ansible.builtin.user:
+      name: "{{vnginx}}"
+      comment: vnginx docker user
+      uid: 1042
+      group: docker
+  
+  - name: Create a network nginx_proxy
+    become: yes
+    become_user: "{{vnginx}}"
+    docker_network:
+      name: nginx_proxy     
+
+  - name: Ensure docker compose config in place
+    become: yes
+    become_user: "{{vnginx}}"
+    template:
+      src: ../templates/nginx_docker_compose.j2
+      dest: "{{ vnginx_compose }}"
+      backup: true
+      mode: 0640
+
+  - name: deploy Docker Compose stack
+    become: yes
+    become_user: "{{vnginx}}"
+    community.docker.docker_compose:
+      project_src: /home/{{vnginx}}
+      files:
+      - docker-compose.yml 

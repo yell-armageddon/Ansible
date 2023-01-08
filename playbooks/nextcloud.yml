@@ -1,0 +1,42 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars.json
+  tasks:
+  - name: Add the user nextcloud
+    become: true  
+    ansible.builtin.user:
+      name: "{{vnextcloud}}"
+      comment: nextcloud docker user
+      uid: 1041
+      group: docker
+  
+  - name: create folders
+    become: yes
+    become_user: "{{vnextcloud}}"
+    ansible.builtin.file:
+      path: "{{item.src}}"
+      state: directory
+      #mode: '0755'
+    loop:
+      - {src: "/home/{{vnextcloud}}/backup"}
+      - {src: "/home/{{vnextcloud}}/config"}
+      
+  - name: Create a network
+    become: yes
+    become_user: "{{vnextcloud}}"
+    docker_network:
+      name: nextcloud_network
+
+  - name: Ensure docker compose config in place
+    become: yes
+    become_user: "{{vnextcloud}}"
+    template:
+      src: ../templates/nextcloud_docker_compose.j2
+      dest: "{{ vnextcloud_compose }}"
+      backup: true
+      mode: 0640
+
+
+
+
+      

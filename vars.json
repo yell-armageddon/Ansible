@@ -1,3 +1,25 @@
 {
-   "mykey"  : "{{ lookup('file', '/home/yell/.ssh/id_ubuntuserver.pub' ) }}"
+   "_comment1": "variables for BOOKSTACK",
+   "vbookstack": "bookstack",
+   "vbookstack_compose": "/home/{{vbookstack}}/docker-compose.yml",
+   "vbookstack_db_host": "bookstack_db",
+   "vbookstack_db_app": "bookstackapp",
+   "vbookstack_db_user": "bookstack",
+   "vbookstack_db_password": "SR£tfeadscRT!",
+   "vbookstack_db_root_password": "WFAASR£tfeadsc?)as3",
+   "vbookstack_app_url": "localhost",
+
+   "_comment2": "variables for NEXTXCLOUD",
+   "vnextcloud": "nextcloud",
+   "vnextcloud_compose": "/home/{{vnextcloud}}/docker-compose.yml",
+   "vnextcloud_db_app": "nextcloud",
+   "vnextcloud_db_user": "nextcloud",
+   "vnextcloud_db_password": "SR£tfeadscRT!",
+   "vnextcloud_db_root_password": "WFAASR£tfeadsc?)as3",
+   "vnextcloud_host": "yell.goip.it",
+   "vnextcloud_letsencrypt_email": "drettstadt@gmail.com",
+
+   "_comment3": "variables for NGINX",
+   "vnginx": "nginx",
+   "vnginx_compose": "/home/{{vnginx}}/docker-compose.yml"
 }

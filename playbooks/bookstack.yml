@@ -1,0 +1,61 @@
+- hosts: all
+  vars_files:
+    - ../vars.json
+  tasks:
+  - name: Add the user bookstack
+    become: true  
+    ansible.builtin.user:
+      name: "{{vbookstack}}"
+      comment: bookstack docker user
+      uid: 1040
+      group: docker
+  
+  - name: create folders
+    become: yes
+    become_user: "{{vbookstack}}"
+    ansible.builtin.file:
+      path: "{{item.src}}"
+      state: directory
+      #mode: '0755'
+    loop:
+      - {src: "/home/{{vbookstack}}/backup"}
+      - {src: "/home/{{vbookstack}}/config"}
+      
+
+  - name: Ensure docker compose config in place
+    become: yes
+    become_user: "{{vbookstack}}"
+    template:
+      src: ../templates/bookstack_docker_compose.j2
+      dest: "{{ vbookstack_compose }}"
+      backup: true
+      mode: 0640
+
+  - name: Pull bookstack image
+    become: yes
+    become_user: "{{vbookstack}}"
+    community.docker.docker_image:
+      name: lscr.io/linuxserver/bookstack
+      source: pull
+      # Select platform for pulling. If not specified, will pull whatever docker prefers.
+      pull:
+        platform: amd64
+
+  - name: Pull mariadb image
+    become: yes
+    become_user: "{{vbookstack}}"
+    community.docker.docker_image:
+      name: lscr.io/linuxserver/mariadb
+      source: pull
+      # Select platform for pulling. If not specified, will pull whatever docker prefers.
+      pull:
+        platform: amd64
+
+  - name: deploy Docker Compose stack
+    become: yes
+    become_user: "{{vbookstack}}"
+    community.docker.docker_compose:
+      project_src: /home/{{vbookstack}}
+      files:
+      - docker-compose.yml
+      
