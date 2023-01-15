@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: myvhosts
   vars_files:
     - ../vars.json
   tasks:
@@ -40,6 +40,20 @@
       # Select platform for pulling. If not specified, will pull whatever docker prefers.
       pull:
         platform: amd64
+
+  - name: Create a network net_bookstack
+    become: yes
+    become_user: "{{vbookstack}}"
+    docker_network:
+      name: net_bookstack  
+
+  - name: Add a container to a network
+    become: yes
+    become_user: "{{vbookstack}}"
+    docker_network:
+      name: net_bookstack
+      connected:
+        - proxy
 
   - name: Pull mariadb image
     become: yes

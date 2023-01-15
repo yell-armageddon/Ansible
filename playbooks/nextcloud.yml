@@ -25,7 +25,17 @@
     become: yes
     become_user: "{{vnextcloud}}"
     docker_network:
-      name: nextcloud_network
+      name: net_nextcloud
+
+  - name: Add a container to a network
+    become: yes
+    become_user: "{{vnextcloud}}"
+    docker_network:
+      name: net_nextcloud
+      connected:
+        - proxy
+        - nginx_web_1
+  
 
   - name: Ensure docker compose config in place
     become: yes
@@ -36,7 +46,11 @@
       backup: true
       mode: 0640
 
-
-
-
+  - name: deploy Docker Compose stack
+    become: yes
+    become_user: "{{vnextcloud}}"
+    community.docker.docker_compose:
+      project_src: /home/{{vnextcloud}}
+      files:
+      - docker-compose.yml 
       

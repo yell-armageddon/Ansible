@@ -5,6 +5,9 @@ services:
   bookstack:
     image: lscr.io/linuxserver/bookstack
     container_name: bookstack
+    networks:
+      - net_bookstack
+      - net_nginx_proxy
     environment:
       - PUID=1000
       - PGID=1000
@@ -21,9 +24,12 @@ services:
     restart: unless-stopped
     depends_on:
       - bookstack_db
+
   bookstack_db:
     image: lscr.io/linuxserver/mariadb
     container_name: bookstack_db
+    networks:
+      - net_bookstack
     environment:
       - PUID=1000
       - PGID=1000
@@ -36,3 +42,9 @@ services:
       - /home/{{vbookstack}}/dbconfig:/config
       - /home/{{vbookstack}}/backup:/backup
     restart: unless-stopped
+
+networks:
+  net_bookstack:
+    external: true
+  net_nginx_proxy:
+    external: true

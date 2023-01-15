@@ -1,4 +1,7 @@
 {
+   "vhost": "yell.goip.it",
+   "vemail": "yell@gmx.de",
+
    "_comment1": "variables for BOOKSTACK",
    "vbookstack": "bookstack",
    "vbookstack_compose": "/home/{{vbookstack}}/docker-compose.yml",
@@ -7,7 +10,7 @@
    "vbookstack_db_user": "bookstack",
    "vbookstack_db_password": "SR£tfeadscRT!",
    "vbookstack_db_root_password": "WFAASR£tfeadsc?)as3",
-   "vbookstack_app_url": "localhost",
+   "vbookstack_app_url": "bookstack.{{vhost}}",
 
    "_comment2": "variables for NEXTXCLOUD",
    "vnextcloud": "nextcloud",
@@ -16,10 +19,14 @@
    "vnextcloud_db_user": "nextcloud",
    "vnextcloud_db_password": "SR£tfeadscRT!",
    "vnextcloud_db_root_password": "WFAASR£tfeadsc?)as3",
-   "vnextcloud_host": "yell.goip.it",
+   "vnextcloud_host": "nextcloud.{{vhost}}",
    "vnextcloud_letsencrypt_email": "drettstadt@gmail.com",
 
    "_comment3": "variables for NGINX",
    "vnginx": "nginx",
-   "vnginx_compose": "/home/{{vnginx}}/docker-compose.yml"
+   "vnginx_compose": "/home/{{vnginx}}/docker-compose.yml",
+   "vnginx_host": "{{vhost}}",
+   "vnginx_letsencrypt_email": "drettstadt@gmail.com",
+   "vnginx_conf": "/home/{{vnginx}}/proxy/conf.d/default.conf",
+   "vnginx_nextcloud_conf": "/home/{{vnginx}}/proxy/conf.d/nextcloud.conf"
 }
