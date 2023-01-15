@@ -10,7 +10,7 @@
    "vbookstack_db_user": "bookstack",
    "vbookstack_db_password": "SR£tfeadscRT!",
    "vbookstack_db_root_password": "WFAASR£tfeadsc?)as3",
-   "vbookstack_app_url": "bookstack.{{vhost}}",
+   "vbookstack_host": "bookstack.{{vhost}}",
 
    "_comment2": "variables for NEXTXCLOUD",
    "vnextcloud": "nextcloud",

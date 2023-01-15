@@ -21,7 +21,7 @@
       - {src: "/home/{{vnextcloud}}/backup"}
       - {src: "/home/{{vnextcloud}}/config"}
       
-  - name: Create a network
+  - name: Create a network net_nextcloud
     become: yes
     become_user: "{{vnextcloud}}"
     docker_network:

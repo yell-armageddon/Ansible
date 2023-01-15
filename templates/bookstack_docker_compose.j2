@@ -11,14 +11,16 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - APP_URL={{vbookstack_app_url}}
+      - APP_URL=https://{{vbookstack_host}}
       - DB_HOST={{vbookstack_db_host}}
       - DB_USER={{vbookstack_db_user}}
       - DB_PASS={{vbookstack_db_password}}
       - DB_DATABASE={{vbookstack_db_app}}
+      - VIRTUAL_HOST={{vbookstack_host}}
     volumes:
       - /home/{{vbookstack}}/config:/config
-      
+
+
     ports:
       - 6875:80
     restart: unless-stopped

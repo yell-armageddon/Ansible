@@ -20,7 +20,7 @@
     become: yes
     become_user: "{{vnginx}}"
     template:
-      src: ../templates/nginx_docker_compose2.j2
+      src: ../templates/nginx_docker_compose.j2
       dest: "{{ vnginx_compose }}"
       backup: true
       mode: 0640

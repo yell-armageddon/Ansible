@@ -54,6 +54,7 @@
       name: net_bookstack
       connected:
         - proxy
+        - nginx_web_1
 
   - name: Pull mariadb image
     become: yes
