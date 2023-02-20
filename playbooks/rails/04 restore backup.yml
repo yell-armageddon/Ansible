@@ -1,0 +1,22 @@
+- hosts: myvhosts
+  vars_files:
+    - ../../vars.json
+  tasks:
+  - name: Copy database backup
+    become: true
+    become_user: "{{vmagic}}"
+    copy:
+      src: "../../templates/rails/db_clean1.sql"
+      dest: "/home/{{ vmagic }}/db/backup"
+      backup: true
+      mode: 0640
+
+  - name: Run a simple command (command)
+    become: true
+    become_user: "{{vmagic}}"
+    community.docker.docker_container_exec:
+      container: magic_db
+      command: /bin/bash -c "mysql -p Magic -u {{vmagic_db_user}} --password={{vmagic_db_pw}}  < /backup/db_clean1.sql"
+      chdir: /root
+    register: result
+

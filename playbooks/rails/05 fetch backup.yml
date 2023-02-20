@@ -1,0 +1,12 @@
+- hosts: myvhosts
+  vars_files:
+    - ../../vars.json
+  tasks:
+  - name: Fetch database backup
+    become: true
+    become_user: "{{vmagic}}"
+    fetch:
+      src: "/home/{{ vmagic }}/db/backup/db_clean.sql"
+      dest: ../../templates/rails/
+      backup: true
+      mode: 0640

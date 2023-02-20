@@ -10,25 +10,15 @@
       uid: 1041
       group: docker
   
-  - name: create folders
-    become: yes
-    become_user: "{{vnextcloud}}"
-    ansible.builtin.file:
-      path: "{{item.src}}"
-      state: directory
-      #mode: '0755'
-    loop:
-      - {src: "/home/{{vnextcloud}}/backup"}
-      - {src: "/home/{{vnextcloud}}/config"}
       
   - name: Create a network net_nextcloud
-    become: yes
+    become: true
     become_user: "{{vnextcloud}}"
     docker_network:
       name: net_nextcloud
 
   - name: Add a container to a network
-    become: yes
+    become: true
     become_user: "{{vnextcloud}}"
     docker_network:
       name: net_nextcloud
@@ -38,7 +28,7 @@
   
 
   - name: Ensure docker compose config in place
-    become: yes
+    become: true
     become_user: "{{vnextcloud}}"
     template:
       src: ../templates/nextcloud_docker_compose.j2
@@ -47,10 +37,28 @@
       mode: 0640
 
   - name: deploy Docker Compose stack
-    become: yes
+    become: true
     become_user: "{{vnextcloud}}"
     community.docker.docker_compose:
       project_src: /home/{{vnextcloud}}
       files:
       - docker-compose.yml 
-      
+
+  - name: Ensure the database backup script is inplace
+    become: true
+    become_user: "{{vnextcloud}}"
+    template:
+      src: ../templates/nextcloud_db_backup.j2
+      dest: "/home/{{ vnextcloud}}/db_backup.sh"
+      backup: true
+      mode: 0750
+
+  - name: schedule a database backup every night
+    become: true      
+    ansible.builtin.cron:
+      name: "check dirs"
+      minute: "0"
+      hour: "3"
+      job: "/home/{{ vnextcloud}}/db_backup.sh"
+      cron_file: ansible_nextcloud
+      user: root

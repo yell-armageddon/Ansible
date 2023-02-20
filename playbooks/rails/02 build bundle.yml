@@ -1,0 +1,28 @@
+- hosts: myvhosts
+  vars_files:
+    - ../../vars.json
+  tasks:
+  - name: run docker build
+    become: true
+    become_user: "{{vmagic}}"
+    ansible.builtin.shell:
+      cmd: docker run -it -v $PWD:/opt/app magic:v1.0 rails new --skip-bundle -f magic
+
+  - name: Ensure the database backup script is inplace
+    become: true
+    become_user: "{{vmagic}}"
+    template:
+      src: ../../templates/magic_db_backup.j2
+      dest: "/home/{{vmagic}}/db_backup.sh"
+      backup: true
+      mode: 0750
+
+  - name: schedule a database backup every night
+    become: true      
+    ansible.builtin.cron:
+      name: "check dirs"
+      minute: "5"
+      hour: "3"
+      job: "/home/{{vmagic}}/db_backup.sh"
+      cron_file: ansible_magic
+      user: root 

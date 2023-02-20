@@ -11,13 +11,13 @@
       group: docker
   
   - name: Create a network nginx_proxy
-    become: yes
+    become: true
     become_user: "{{vnginx}}"
     docker_network:
       name: net_nginx_proxy     
 
   - name: Ensure docker compose config in place
-    become: yes
+    become: true
     become_user: "{{vnginx}}"
     template:
       src: ../templates/nginx_docker_compose.j2
@@ -26,7 +26,7 @@
       mode: 0640
 
   - name: deploy Docker Compose stack
-    become: yes
+    become: true
     become_user: "{{vnginx}}"
     community.docker.docker_compose:
       project_src: /home/{{vnginx}}

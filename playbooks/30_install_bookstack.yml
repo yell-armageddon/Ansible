@@ -11,7 +11,7 @@
       group: docker
   
   - name: create folders
-    become: yes
+    become: true
     become_user: "{{vbookstack}}"
     ansible.builtin.file:
       path: "{{item.src}}"
@@ -23,7 +23,7 @@
       
 
   - name: Ensure docker compose config in place
-    become: yes
+    become: true
     become_user: "{{vbookstack}}"
     template:
       src: ../templates/bookstack_docker_compose.j2
@@ -32,7 +32,7 @@
       mode: 0640
 
   - name: Pull bookstack image
-    become: yes
+    become: true
     become_user: "{{vbookstack}}"
     community.docker.docker_image:
       name: lscr.io/linuxserver/bookstack
@@ -42,13 +42,13 @@
         platform: amd64
 
   - name: Create a network net_bookstack
-    become: yes
+    become: true
     become_user: "{{vbookstack}}"
     docker_network:
       name: net_bookstack  
 
   - name: Add a container to a network
-    become: yes
+    become: true
     become_user: "{{vbookstack}}"
     docker_network:
       name: net_bookstack
@@ -57,7 +57,7 @@
         - nginx_web_1
 
   - name: Pull mariadb image
-    become: yes
+    become: true
     become_user: "{{vbookstack}}"
     community.docker.docker_image:
       name: lscr.io/linuxserver/mariadb
@@ -67,7 +67,7 @@
         platform: amd64
 
   - name: deploy Docker Compose stack
-    become: yes
+    become: true
     become_user: "{{vbookstack}}"
     community.docker.docker_compose:
       project_src: /home/{{vbookstack}}

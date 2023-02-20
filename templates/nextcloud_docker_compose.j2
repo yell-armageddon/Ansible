@@ -7,6 +7,7 @@ services:
     networks:
       - net_nextcloud
     volumes:
+      - ./app/db:/backup
       - db:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
     environment:

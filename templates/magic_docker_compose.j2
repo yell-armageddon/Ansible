@@ -1,0 +1,57 @@
+
+version: "2"
+services:
+  magic:
+    build: .
+    container_name: magic
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    networks:
+      - net_magic
+      - net_nginx_proxy
+    volumes:
+      - ./magic:/opt/app
+    ports:
+      - "3000:3000"
+    environment:
+      - VIRTUAL_HOST={{vmagic_host}}
+      - DB_HOST=magic_db
+      - DB_USER={{vmagic_db_user}}
+      - DB_PASS={{vmagic_db_pw}}
+      - DB_DATABASE={{vmagic_db}}
+
+    restart: unless-stopped
+    depends_on:
+      - magic_db
+
+  magic_db:
+    container_name: magic_db
+    image: lscr.io/linuxserver/mariadb
+    networks:
+      - net_magic
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - MYSQL_ROOT_PASSWORD={{vmagic_db_root_pw}}
+      - TZ=Europe/London
+      - MYSQL_DATABASE={{vmagic_db}}
+      - MYSQL_USER={{vmagic_db_user}}
+      - MYSQL_PASSWORD={{vmagic_db_pw}}
+      - EMAIL_SERVER_ADDRESS={{vmagic_email_server_address}}
+      - EMAIL_SERVER_PORT={{vmagic_email_server_port}}
+      - EMAIL_DOMAIN={{vmagic_email_domain}}
+      - EMAIL_ADDRESS={{vmagic_email_server_address}}
+      - EMAIL_PASSWORD={{vmagic_email_password}}
+      - EMAIL_AUTHENTICATION={{vmagic_email_authentication}}
+      - EMAIL_TTLS={{vmagic_email_ttls}}
+
+
+    volumes:
+      - ./db/config:/config
+      - ./db/backup:/backup
+    restart: unless-stopped
+
+networks:
+  net_magic:
+    external: true
+  net_nginx_proxy:
+    external: true

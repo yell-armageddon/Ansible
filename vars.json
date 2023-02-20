@@ -1,4 +1,12 @@
-{
+{  "_comment0": "remove not used directories, otherwise backups with borgmatic will fail.",
+   "using": [
+            {"backupdir": "/home/{{vbookstack}}/config/www/.env"},
+            {"backupdir": "/home/{{vbookstack}}/config/www/images"},
+            {"backupdir": "/home/{{vbookstack}}/config/www/files"},
+            {"backupdir": "/home/{{vnextcloud}}/app/data"},
+            {"backupdir": "/home/{{vnextcloud}}/app/db"},
+            {"backupdir": "/home/{{vmagic}}/db/backup"}
+   ],
    "vhost": "yell.goip.it",
    "vemail": "yell@gmx.de",
 
@@ -28,5 +36,29 @@
    "vnginx_host": "{{vhost}}",
    "vnginx_letsencrypt_email": "drettstadt@gmail.com",
    "vnginx_conf": "/home/{{vnginx}}/proxy/conf.d/default.conf",
-   "vnginx_nextcloud_conf": "/home/{{vnginx}}/proxy/conf.d/nextcloud.conf"
+   "vnginx_nextcloud_conf": "/home/{{vnginx}}/proxy/conf.d/nextcloud.conf",
+
+   "_comment4": "variables for borgmatic",
+   "vborgmatic_backup_target": "/media/backup/",
+   "vborgmatic_repo": "repo",
+   "vborgmatic_pw": "geheim1",
+
+   "_comment5": "variables for rails application",
+   "vmagic": "magic",
+   "vmagic_host": "magic.{{vhost}}",
+   "vmagic_email_server_address": "mail.gmx.net",
+   "vmagic_email_server_port": "465",
+   "vmagic_email_address": "",
+   "vmagic_email_password": "",
+   "vmagic_email_authentication": "plain",
+   "vmagic_email_ttls": "true",
+   "vmagic_email_domain": "gmx.net",
+   "vmagic_db_root_pw": "123456",
+   "vmagic_db_user": "sec_user",
+   "vmagic_db_pw": "geheim123sql",
+   "vmagic_db": "Magic",
+   "vmagic_compose": "/home/{{vmagic}}/docker-compose.yml",
+   "vmagic_dummy_user_email": "dummy@dummy.com",
+   "vmagic_dummy_user_pw": "!123Asdasda"
+
 }
