@@ -1,0 +1,182 @@
+<% cardCount = countCards(rev) %>
+<% countDcrs=  countDcrs(rev)+2 %>
+<% calcCMC = (calcCMC(rev)/cardCount.to_f).round(2) %>
+<% typeArray = {10 => 'Creature',
+		20 => 'Artifact',
+		30 => 'Enchantment',
+		40 => 'Instant',
+		50 => 'Sorcery',
+		60 => 'Planeswalker',
+		80 => 'Land'} %>
+
+
+
+<div class ="panel panel-primary deck">
+	<div class="panel-heading nomargin">
+		<b><%= link_to deck.name,  !rev.nil? ? path_to(rev) : "" , :style=>"color:white"%></b>,
+		"<%= rev.name %>", 
+		Cards:	<%= cardCount %>, CMC: <%= calcCMC%> by
+		<%= link_to rev.user.name, rev_user_path(rev) %>,
+		Created <%= time_ago_in_words(rev.created_at) %> ago
+		<% if rev.user == current_user%>
+			<%= link_to "Edit", path_to(rev)+'/edit', class: 
+				"btn btn-info btn-xs"	%>
+			<% if !rev.physical %>
+			<%= link_to "owned", path_to(rev)+'/setPhysical',
+				class: "btn btn-info btn-xs" %>
+			<% else %>
+			<%= link_to "not owned", path_to(rev)+'/unsetPhysical',
+				class: "btn btn-info btn-xs" %>
+
+			<% end %>
+		<% end %>
+	</div>
+
+	<div class="container">
+	<div role="tabpanel deck">
+
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs col-md-5" role="tablist">
+			<li role="presentation" class="active"><a href="#home<%=rev.id%>" aria-controls="home<%=rev.id%>" role="tab" data-toggle="tab">User</a></li>
+			<li role="presentation"><a href="#profile<%=rev.id%>" aria-controls="profile<%=rev.id%>" role="tab" data-toggle="tab">CMC</a></li>
+			<li role="presentation"><a href="#messages<%=rev.id%>" aria-controls="messages<%=rev.id%>" role="tab" data-toggle="tab">Type</a></li>
+			<li role="presentation"><a href="#settings<%=rev.id%>" aria-controls="settings<%=rev.id%>" role="tab" data-toggle="tab">prevRev</a></li>
+		</ul>
+
+		<!-- Tab panes -->
+		<div class="tab-content deck">
+			<div role="tabpanel" class="tab-pane active" id="home<%=rev.id%>">
+				<div class ="col-md-6">	
+					<table class ="table table-hover table-very-condensed">
+						<% printed = 0 %>
+						<% category = 0%>
+						<% i =0 %>
+						<% rev.dcrs.all.each do |t| %>
+							<% if printed > countDcrs/2 %>
+								<% printed =0 %>
+								</table>
+								</div>
+						
+								<div class ="col-md-6">
+								<table  class ="table table-hover table-very-condensed">
+							<% end %>
+							<% if t.category_id != category %>
+								<% if i!=0%><tr><td><b><%= i %></b></td><td></td></tr><% end %>
+								<% i = 0 %>
+								<tr><td></td><td> 
+								<% catObj= Category.find(t.category_id) %>
+								<% category = catObj.id %>
+								<b><%= catObj.name %></b>
+									</td></tr>
+							<% end %>
+
+							<tr>
+							<td class="leftcheck"><%= t.amount %></td>
+							<td><%=makeCardLink(t.card)%><%i =i+t.amount %>
+
+							</td>
+							</tr>
+							<% printed = printed +1 %>
+						<% end %>
+						<tr><td><b><%= i %></b></td><td></td></tr>
+					</table>
+				</div>
+			</div>
+	  
+			<div role="tabpanel" class="tab-pane" id="profile<%=rev.id%>">
+				<div class ="col-md-6">	
+					<table class ="table table-hover table-very-condensed">
+						<% printed = 0 %>
+						<% i = 0 %>
+						<% currentCMC = -1%>
+						<% rev.dcrs.all.sort_by{
+								|a| [a.card.CMC	, a.card.name]
+								}.each do |t| %>
+							<% if printed > (countDcrs+8)/2 %>
+								<% printed =0 %>
+								</table>
+								</div>
+								<div class ="col-md-6">
+								<table  class ="table table-hover table-very-condensed">
+							<% end %>
+							<% if t.card.CMC != currentCMC %>
+								<% currentCMC = t.card.CMC %>
+								<% if i!=0%><tr><td><b><%= i %></b></td><td></td></tr><% end %>
+								<% i = 0 %>
+								<tr><td></td><td><b>CMC <%= currentCMC %></b></td></tr>
+								<% printed = printed +1 %>
+							<% end %>
+							<tr>
+							<td class="leftcheck"><%= t.amount %></td>
+							<td><%=makeCardLink(t.card)%><%i =i+t.amount %>
+
+							</td>
+							</tr>
+							<% printed = printed +1 %>
+						<% end %>
+						<tr><td><b><%= i %></b></td><td></td></tr>
+					</table>
+				</div>	  
+			</div>
+			<div role="tabpanel" class="tab-pane" id="messages<%=rev.id%>">
+				<div class ="col-md-6">	
+					<table class ="table table-hover table-very-condensed">
+						<% printed = 0 %>
+						<% i =0 %>
+						<% currentType = 0%>
+						<% rev.dcrs.all.sort_by{
+								|a| [typeToInt(a.card), a.card.name	]
+								}.each do |t| %>
+							<% if printed > (countDcrs+6)/2 %>
+								<% printed =0 %>
+								</table>
+								</div>
+								<div class ="col-md-6">
+								<table  class ="table table-hover table-very-condensed">
+							<% end %>
+							<% if typeToInt(t.card) != currentType %>
+								<% if i!=0%><tr><td><b><%= i %></b></td><td></td></tr><% end %>
+								<% i = 0 %>
+
+								<% currentType = typeToInt(t.card) %>
+								<tr><td></td><td><b><%= typeArray[currentType] %></b></td></tr>
+								<% printed = printed +1 %>
+							<% end %>
+							<tr>
+							<td class="leftcheck"><%= t.amount %></td>
+							<td ><%=makeCardLink(t.card)%>	<%i =i+t.amount %>
+					</td>
+							</tr>
+							<% printed = printed +1 %>
+						<% end %>
+						<tr><td><b><%= i %></b></td><td></td></tr>
+					</table>
+				</div>			       
+			
+			
+			</div>
+			<div role="tabpanel" class="tab-pane" id="settings<%=rev.id%>">
+				<div class ="col-md-6">
+					Changes from last revision:	
+					<table class ="table table-hover table-very-condensed">
+						<% if !cards.nil? %>
+							<% positive = false %>
+							<% cards.sort_by{|z| z[1]}.each do |t| %>
+								<% if t[1]>0 && !positive %> 
+									<% positive = true %>
+									</table>
+									</div>
+	                                                                <div class ="col-md-6">
+	                                                                <table  class ="table table-hover table-very-condensed">
+								<% end %>
+								<tr><td><%= t[1] %></td>
+								<td><%= t[0]>0? makeCardLink(Card.find(t[0])) : "id 0"%></td>
+							</tr>
+							<% end %>	
+						<% end %>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div></div>
+</div>

@@ -1,0 +1,8 @@
+<% text = "Enter Cards" %>
+<% if !@con2.nil? %>
+	<% text = "" %>
+	<% @con2.each do |t| %>
+		<% text=text+t+"\r\n" %>
+	<%end%>	
+<% end %>
+<%= link_to_rev(@rev) %>

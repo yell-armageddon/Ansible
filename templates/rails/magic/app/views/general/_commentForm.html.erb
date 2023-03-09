@@ -1,0 +1,21 @@
+
+<% if !current_user.nil? %>
+<h3>Leave a comment</h3>
+<br />
+<div class="container-fluid">
+<div class="row">
+	<div class="col-md-6 ">
+    <%= form_for(@comment, html: { multipart: true }, post: new_comment_path) do |f| %>
+
+      <%= f.label :comment %>
+      <%= f.text_area :text, class: 'form-control', :value =>'',
+	      :size => '50x4' %>
+
+	<%= f.hidden_field :rev_id, :value => @rev.id %>
+	<%= f.hidden_field :user_id, :value =>current_user.id %>
+      <%= f.submit "submit!", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+</div>
+</div>
+<% end %>

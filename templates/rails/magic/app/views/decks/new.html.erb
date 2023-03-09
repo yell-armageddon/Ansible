@@ -1,0 +1,17 @@
+<div class="container">
+<h1>New Deck</h1>
+
+<div class="row">
+	<div class="col-md-6">
+		<%= form_for(@deck) do |f| %>
+			<%= f.label :name %>
+			<%= f.text_field :name, class: 'form-control' %>
+			<br />
+			<%= f.select :format, options_for_select(
+			       	["Unspecified","Pauper", "EDH", "PDH", "Standard", "Legacy", "Modern", "Draft"]) %>
+			<br />
+			<%= f.submit "Create Deck", class: "btn btn-primary" %>
+		<%end%>
+	</div>
+</div>
+</div>

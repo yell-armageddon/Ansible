@@ -1,0 +1,26 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars.json
+
+  tasks:
+
+  - name: Ensure the DNS script is inplace
+    become: true
+    template:
+      src: ../templates/dns_sync_script.j2
+      dest: "/etc/dns_sync_script.sh"
+      backup: true
+      mode: 0750
+
+  - name: schedule DNS updates all 3 hours
+    become: true      
+    ansible.builtin.cron:
+      name: "check dirs"
+      minute: "0"
+      hour: "*/3"
+      job: "/etc/dns_sync_script.sh"
+      cron_file: ansible_dns_sync
+      user: root
+      
+
+

@@ -1,0 +1,39 @@
+// Place all the styles related to the decks controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+a:visited{
+}
+
+.deck{
+max-width: 500px;
+}
+
+.deck header{
+	background: #00ff00;
+}
+
+
+.panel-heading >a{
+	color: white;
+}
+
+.panel-heading{
+	margin: 0px;
+	padding: 0px;
+}
+
+
+.table-very-condensed > thead > tr > th,
+.table-very-condensed > tbody > tr > th,
+.table-very-condensed > tfoot > tr > th,
+.table-very-condensed > thead > tr > td,
+.table-very-condensed > tbody > tr > td,
+.table-very-condensed > tfoot > tr > td {
+  padding: 0px;
+}
+
+.leftcheck  {
+	min-width: 20px;
+}

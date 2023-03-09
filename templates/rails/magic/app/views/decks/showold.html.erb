@@ -1,0 +1,60 @@
+<%= stylesheet_link_tag "style.css" %>
+
+<div class = "row">
+	<div class="span6">	
+		<header>
+		<%= @deck.name %>
+		<%= @deck.created_at %>
+		<%= @cardCount %>
+		</header>
+		<div class = "row">
+			<div class ="span3">
+			<table class="table table-hover table-condensed">
+			<% printed = 0 %>
+			<% @deck.dcrs.all.each do |t| %>
+				<% if printed > @cardCount/2 %>
+					<% printed =0 %>
+					</table>
+					</div>
+					<div class = "span3">
+					<table class="table table-hover table-condensed">
+				<% end %>
+				<tr>
+				<td><%= t.AMOUNT %></td>
+				<td><%=  makeCardLink(t.cards)  %></td>
+				</tr>
+				<% printed = printed +t.AMOUNT %>
+			<% end %>
+			</table>
+			</div>
+		</div>	
+	</div>
+	<div class ="span6">
+		<header>
+		<%= @deck.name %>
+		<%= @deck.created %>
+		<!-- @cardCount -->
+		</header>
+		<div class = "row">
+			<div class ="span3">
+			<table>
+	<% printed = 0 %>
+	<% @deck.dcrs.all.each do |t| %>
+		<% if printed > @cardCount/2 %>
+			<% printed =0 %>
+			</table>
+			</div>
+			<div class = "span3">
+			<table>
+		<% end %>
+		<tr>
+			<td><%= t.AMOUNT %></td>
+			<td><%=  makeCardLink(t.cards)  %></td>
+		</tr>
+		<% printed = printed +t.AMOUNT %>
+<% end %>
+	</table>
+	</div>
+</div>
+</div>
+	</div>

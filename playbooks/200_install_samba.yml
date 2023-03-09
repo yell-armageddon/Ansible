@@ -1,0 +1,28 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars.json
+  tasks:  
+    - name: Install samba and dependencies
+      become: true  
+      apt:
+        pkg:
+          - samba
+          - samba-common
+          - cifs-utils
+        state: latest
+        update_cache: true
+
+    - name: Ensure Samba is running and set to start on boot
+      become: true  
+      ansible.builtin.service:
+        name: smbd.service
+        state: started
+        enabled: yes
+
+    - name: Add the user bookstack
+      become: true  
+      ansible.builtin.user:
+        name: "sambatest"
+        comment: samba user
+        group: samba
+        shell: /bin/false

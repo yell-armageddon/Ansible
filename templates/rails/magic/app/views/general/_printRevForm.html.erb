@@ -1,0 +1,84 @@
+<% text = "Enter Cards\r\nMark your own categories by a leading !\r\nExample:
+	!My Lands\r\n	4 Flooded Strand\r\n categories can not contain numbers"  %>
+<% if !@con2.nil? %>
+	<% text = "" %>
+	<% @con2.each do |t| %>
+		<% text=text+t+"\r\n" %>
+	<%end%>	
+<% end %>
+
+
+
+<% if @revMode =="new" %>
+<div class="row">
+	<div class="col-md-3 col-md-offset-3 span3">
+			<%= form_for(@rev, html: { multipart: true }) do |f| %>
+			<%= f.label :name %>
+			<%= f.text_field :name, class: 'form-control',	:value => @rev.name	%>
+
+		<%= f.hidden_field :physical, :value => false %>
+		<%= f.hidden_field :deck_id, :value => @deck.id %>
+		<%= f.hidden_field :rev_nr, :value => @revNr %>
+			<br />
+			<div class="field">	
+				<%= f.text_area  :content, value: text, :size =>"30x17"  %>
+			</div>
+			<br />
+                        <div class="field">
+                                <%= #f.text_area  :sideboard, value: sideb, :size =>"30x5" 
+				 %>
+                        </div>
+			<br />
+				<%= f.submit "Create Rev", class: "btn btn-primary" %>
+		<%end%>
+	</div>
+</div>
+<% end %>
+
+<% if @revMode == "edit" %>
+<div class="row">
+	<div class="col=md-9 col-md-offset-3 span3">
+		<%= form_for(@rev, html: { multipart: true }) do |f| %>
+			<%= f.label :name %>
+			<%= f.text_field :name, class: 'form-control',	:value => @rev.name.to_s	%>
+		<%= f.hidden_field :physical, :value => false %>
+
+		<%= f.hidden_field :deck_id, :value => @deck.id %>
+		<%= f.hidden_field :rev_nr, :value => @revNr %>
+			<br />
+			<div class="field">	
+				<%= f.text_area  :content, value: text, :size =>"30x17"  %>
+			</div>
+			<br />
+                        <div class="field">
+                                <%=# f.text_area  :sideboard, value: sideb, :size =>"30x5"  
+				%>
+                        </div>
+			<br />
+				<%= f.submit "Edit Rev", class: "btn btn-primary" %>
+		<%end%>
+	</div>
+</div>
+<% end %>
+
+
+<% if @revMode == "export" %>
+<div class="row">
+        <div class="col=md-9 col-md-offset-3 span3">
+                <%= form_for(@rev, html: { multipart: true }) do |f| %>
+                        <%= f.label :name %>
+                        <%= f.text_field :name, class: 'form-control',  :value => @rev.name.to_s        %>
+                <%= f.hidden_field :physical, :value => false %>
+
+                <%= f.hidden_field :deck_id, :value => @deck.id %>
+                <%= f.hidden_field :rev_nr, :value => @revNr %>
+                        <br />
+                        <div class="field">
+                                <%= f.text_area  :content, value: text, :size =>"30x17"  %>
+                        </div>
+                        <br />
+                <%end%>
+        </div>
+</div>
+<% end %>
+

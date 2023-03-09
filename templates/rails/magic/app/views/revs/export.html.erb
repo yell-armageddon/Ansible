@@ -1,0 +1,49 @@
+<% typeArray = {10 => 'Creature',
+                20 => 'Artifact',
+                30 => 'Enchantment',
+                40 => 'Instant',
+                50 => 'Sorcery',
+                60 => 'Planeswalker',
+                80 => 'Land'} %>
+
+
+
+<h1>Revs#export</h1>
+        <div class="col-md-3">
+Deck as entered
+<textarea cols="30" id="rev_content" name="rev[content]" rows="17">
+<% @rev.dcrs.all.each do |t| %>
+<%=t.amount.to_s+" "+t.card.name%>
+<% end %>
+</textarea>
+
+</div>
+
+<% currentType = 0%>
+        <div class="col-md-3  span3">
+Deck by type
+<textarea cols="30" id="rev_content" name="rev[content]" rows="17">
+<% @rev.dcrs.all.sort_by{ |a| [typeToInt(a.card), a.card.name] }.each do |t| %>
+	<% if typeToInt(t.card) != currentType %>
+		<% currentType = typeToInt(t.card) %>
+!<%= typeArray[currentType] %>
+	<% end %>
+<%=t.amount.to_s+" "+t.card.name%>
+<% end %>
+</textarea>
+</div>
+
+<%currentCMC =-1%>
+<div class="col-md-3  span3">
+Deck by CMC 
+<textarea cols="30" id="rev_content" name="rev[content]" rows="17">
+<% @rev.dcrs.all.sort_by{ |a| [a.card.CMC, a.card.name] }.each do |t| %>
+        <% if t.card.CMC != currentCMC %>
+                <% currentCMC = t.card.CMC %>
+!CMC<%= t.card.CMC %>
+        <% end %>
+<%=t.amount.to_s+" "+t.card.name%>
+<% end %>
+</textarea>
+</div>
+

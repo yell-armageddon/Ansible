@@ -1,0 +1,86 @@
+<% if  @secondRev.nil?%>
+<h1> Select a second deck to compare to</h1>
+
+
+<div class="container">
+	<div class="col-md-6">
+	<table class="table table-condensed">
+	<tr>
+		<th>Name</th><th>Latest Revisions</th>
+	</tr>
+	<% @deck.sort_by{ |a| updatedAt(a) }.reverse.each do |t| %>
+		<tr>
+			<td><%= makeDeckLink(t) %></td>
+			<td>
+				<% t.revs.each do |s| %>
+<% string="/revs/compare?firstDeck="+@firstRev.deck_id.to_s+"&firstRev="+@firstRev.rev_nr.to_s+"&secondDeck="+t.id.to_s+"&secondRev="+s.rev_nr.to_s%>
+				<%= link_to s.rev_nr, 
+					string	, :class => 'btn btn-info' %>
+				<% end %>
+
+			</td>
+	</tr>
+	<% end %>
+	</table>
+	</div>
+</div>
+
+<% end %>
+<% if !@secondRev.nil? %>
+<h1>Deck Comparison</h1>
+ Note that "prevRev" is disabled.
+<div class="container">
+<div class="col-md-6">
+	<h3>	Deck <%= @firstDeck.name %>, Revision: <%= @firstRev.rev_nr %></h3>
+	<%= render partial: "general/printPartialDeck", locals: {rev: @firstRev, deck: @firstDeck, cards: nil} %>
+</div>
+<div class="col-md-6">
+	<h3>	Deck <%= @secondDeck.name %>, Revision: <%= @secondRev.rev_nr %></h3>
+	<%= render partial: "general/printPartialDeck", locals: {rev: @secondRev, deck: @secondDeck, cards: nil} %>
+</div>
+</div>
+
+	<h3>Difference in the two decks:</h3>
+
+<div class="container">
+<div role="tabpanel deck">
+		<!-- Nav tabs -->
+	<ul class="nav nav-tabs col-md-5" role="tablist">
+		<li role="presentation" class="active"><a href="#home209111" aria-controls="home209111" role="tab" data-toggle="tab">User</a></li>
+	</ul>
+	<!-- Tab panes -->
+	<%if !@cards.nil? %>
+	<div class="tab-content deck">
+	<div role="tabpanel" class="tab-pane active" id="home209111">
+	<div class="col-md-6">
+		<table class ="table table-hover table-very-condensed">
+			<% @cards.sort_by{|z| typeToInt(Card.find(z[0])) }.each do |t| %>
+				<% if t[1]<0 %>
+					<tr><td><font color="red"><%= t[1] %></font></td>
+					<td><%= t[0]>0? removeCardLink(Card.find(t[0])) : "id 0"%></td>
+					<td><%= Card.find(t[0]).TYPE%></td>
+					</tr>
+				<% end %>
+			<% end %>
+		</table>
+	</div>
+	</div>
+	</div>
+	<div class="col-md-6">
+		<h5>Cards added to the right deck</h5>
+		<table class ="table table-hover table-very-condensed">
+			<% @cards.sort_by{|z| typeToInt(Card.find(z[0])) }.each do |t| %>
+				<% if t[1]>0 %>
+					<tr><td><font color="#00DE00"><%= t[1] %></font></td>
+					<td><%= t[0]>0? addCardLink(Card.find(t[0])) : "id 0"%></td>
+					<td><%= Card.find(t[0]).TYPE%></td>					
+				</tr>
+				<% end %>
+			<% end %>
+		</table>
+	</div>
+
+	<% end %>
+</div>
+</div>
+<% end %>

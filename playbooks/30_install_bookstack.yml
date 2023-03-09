@@ -73,4 +73,23 @@
       project_src: /home/{{vbookstack}}
       files:
       - docker-compose.yml
+
+  - name: Ensure the database backup script is inplace
+    become: true
+    become_user: "{{vbookstack}}"
+    template:
+      src: ../templates/bookstack_db_backup.j2
+      dest: "/home/{{vbookstack}}/db_backup.sh"
+      backup: true
+      mode: 0750
+
+  - name: schedule a database backup every night
+    become: true      
+    ansible.builtin.cron:
+      name: "check dirs"
+      minute: "0"
+      hour: "3"
+      job: "/home/{{vbookstack}}/db_backup.sh"
+      cron_file: ansible_bookstack
+      user: root
       

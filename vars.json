@@ -1,12 +1,15 @@
 {  "_comment0": "remove not used directories, otherwise backups with borgmatic will fail.",
    "using": [
-            {"backupdir": "/home/{{vbookstack}}/config/www/.env"},
-            {"backupdir": "/home/{{vbookstack}}/config/www/images"},
-            {"backupdir": "/home/{{vbookstack}}/config/www/files"},
+            {"backupdir": "/home/{{vbookstack}}/config/www"},
             {"backupdir": "/home/{{vnextcloud}}/app/data"},
             {"backupdir": "/home/{{vnextcloud}}/app/db"},
             {"backupdir": "/home/{{vmagic}}/db/backup"}
    ],
+
+   "vhosts": [
+      "{{vbookstack_host}}", "{{vnextcloud_host}}", "{{vmagic_host}}"
+   ],
+
    "vhost": "yell.goip.it",
    "vemail": "yell@gmx.de",
 
@@ -59,6 +62,10 @@
    "vmagic_db": "Magic",
    "vmagic_compose": "/home/{{vmagic}}/docker-compose.yml",
    "vmagic_dummy_user_email": "dummy@dummy.com",
-   "vmagic_dummy_user_pw": "!123Asdasda"
+   "vmagic_dummy_user_pw": "!123Asdasda",
+
+   "_comment6": "goip username and password of the router the use.",
+   "vgoip_user": "iiEIkFtwxXHQWfj",
+   "vgoip_pw": "z1LxIDWBCp9muus"
 
 }

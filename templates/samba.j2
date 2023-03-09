@@ -1,0 +1,9 @@
+usergroups:
+  - family
+  - admins
+
+users:
+  - {name: 'mainuser', groups: 'family, admins', smbpasswd: 'mainuser'}
+  - {name: 'otheruser', groups: 'family', smbpasswd: 'otheruser'}
+  - {name: 'thirduser', groups: 'family', smbpasswd: 'thirduser'}
+  - {name: 'userNotInGroups', groups: '', smbpasswd: 'userNotInGroups'}
