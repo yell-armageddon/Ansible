@@ -1,8 +1,8 @@
 {  "_comment0": "remove not used directories, otherwise backups with borgmatic will fail.",
    "using": [
             {"backupdir": "/home/{{vbookstack}}/config/www"},
-            {"backupdir": "/home/{{vnextcloud}}/app/data"},
-            {"backupdir": "/home/{{vnextcloud}}/app/db"},
+            {"backupdir": "/home/{{vbookstack}}/backup"},
+            {"backupdir": "/home/{{vnextcloud}}/app"},
             {"backupdir": "/home/{{vmagic}}/db/backup"}
    ],
 
@@ -45,6 +45,8 @@
    "vborgmatic_backup_target": "/media/backup/",
    "vborgmatic_repo": "repo",
    "vborgmatic_pw": "geheim1",
+   "vbackup_group": "mybackup",
+   "vbackup_user": "myuser",
 
    "_comment5": "variables for rails application",
    "vmagic": "magic",

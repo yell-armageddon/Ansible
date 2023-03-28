@@ -1,0 +1,26 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars.json
+  vars_prompt:
+    - name: "restore_bookstack"
+      prompt: "Restore the bookstack database (yes/no)? THIS WILL ERASE THE CURRENT DATA."
+      private: no
+    - name: "restore_nextcloud"
+      prompt: "Restore the nextcloud database (yes/no)? THIS WILL ERASE THE CURRENT DATA."
+      private: no
+
+  tasks:  
+  - name: Restoring bookstack db
+    become: true
+    become_user: "{{vbookstack}}"
+    ansible.builtin.shell:
+      cmd: cat /home/{{vbookstack}}/backup/backup.sql |  docker exec -i bookstack_db mysql -u root --password='{{vbookstack_db_root_password}}' {{vbookstack_db_app}}
+    when: restore_bookstack | bool
+
+  
+  - name: Restoring nextcloud db
+    become: true
+    become_user: "{{vnextcloud}}"
+    ansible.builtin.shell:
+      cmd: cat /home/{{vnextcloud}}/app/db/backup.sql |  docker exec -i nextcloud-mariadb mysql -u root --password='{{vnextcloud_db_root_password}}' {{vnextcloud_db_app}}
+    when: restore_nextcloud | bool

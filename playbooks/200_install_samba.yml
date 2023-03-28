@@ -1,6 +1,7 @@
 - hosts: myvhosts
   vars_files:
     - ../vars.json
+    - ../vars/samba.yml
   tasks:  
     - name: Install samba and dependencies
       become: true  
@@ -12,6 +13,71 @@
         state: latest
         update_cache: true
 
+    - name: Install Samba VFS extensions packages
+      ansible.builtin.package:
+        name: "{{ samba_vfs_packages }}"
+        state: present
+      when: samba_vfs_packages is defined
+      tags: samba
+
+    - name: Register Samba version
+      ansible.builtin.shell: >
+        set -o nounset -o pipefail -o errexit &&
+        smbd --version | sed 's/Version //'
+      args:
+        executable: /bin/bash
+      register: samba_version
+      changed_when: false
+      tags: samba
+
+    - name: Ensure groups exists
+      become: true
+      ansible.builtin.group:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - "{{samba_groups}}"
+
+    - name: Add the users to  group sambashare
+      become: true  
+      ansible.builtin.user:
+        name: "{{ item }}"
+        groups: sambashare
+        create_home: no
+        append: yes
+      with_items:
+        - "{{ sambashare_users }}"
+    
+    - name: set Samba passwords for each user
+      become: true
+      shell: "printf '{{ item.password }}\n{{ item.password }}\n' | smbpasswd -a {{ item.name }}"
+      with_items:
+      - "{{ samba_users }}"
+      tags: smbpasswd
+
+    - name: Create Samba shares root directory
+      become: true  
+      ansible.builtin.file:
+        state: directory
+        path: "{{ samba_shares_root }}"
+        owner: root
+        group: root
+        mode: '0755'
+      when: samba_shares|length > 0
+      tags: samba
+
+    - name: Create share directories
+      become: true  
+      ansible.builtin.file:
+        state: directory
+        path: "{{ item.path | default([samba_shares_root, item.name] | join('/')) }}"
+        owner: "{{ item.owner | default('root') }}"
+        group: "{{ item.group | default('users') }}"
+        mode: "{{ item.directory_mode | default('0775') }}"
+        setype: "{{ item.setype | default('samba_share_t') }}"
+      with_items: "{{ samba_shares }}"
+      tags: samba      
+
     - name: Ensure Samba is running and set to start on boot
       become: true  
       ansible.builtin.service:
@@ -19,10 +85,13 @@
         state: started
         enabled: yes
 
-    - name: Add the user bookstack
-      become: true  
-      ansible.builtin.user:
-        name: "sambatest"
-        comment: samba user
-        group: samba
-        shell: /bin/false
+    - name: Samba configuration
+      become: true
+      ansible.builtin.template:
+        dest: "{{ samba_configuration }}"
+        src: ../templates/smb.conf.j2
+        validate: 'testparm -s %s'
+        mode: '0644'
+      notify:
+        - Restart Samba services
+      tags: samba

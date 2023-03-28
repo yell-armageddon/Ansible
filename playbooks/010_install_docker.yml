@@ -21,6 +21,7 @@
           - virtualenv
           - python3-setuptools
           - acl
+          - unzip
           - borgbackup
         state: latest
         update_cache: true

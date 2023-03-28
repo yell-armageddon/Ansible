@@ -1,0 +1,17 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars.json
+  tasks:  
+    - name: Archive the files
+      become: true
+      archive:
+        path: "{{vborgmatic_backup_target}}repo"
+        dest: "{{vborgmatic_backup_target}}repo.gz"
+        format: gz
+
+    - name: create a local repo copy
+      become: true
+      ansible.builtin.fetch:
+        src: "{{vborgmatic_backup_target}}repo.gz"
+        dest: /home/yell/a/repo_{{ ansible_date_time.date }}.gz
+        flat: true

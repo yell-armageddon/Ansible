@@ -9,12 +9,28 @@
         state: directory
         mode: 600
 
-    - name: create folders
+    - name: Ensure group {{vbackup_group}} exists
+      become: true
+      ansible.builtin.group:
+        name: "{{vbackup_group}}"
+        state: present
+
+    - name: create folders {{vborgmatic_backup_target}}
       become: true
       ansible.builtin.file:
         path: "{{vborgmatic_backup_target}}"
         state: directory
-        mode: 600
+        owner: root
+        group: "{{vbackup_group}}"
+        mode: 750
+
+    - name: add user {{vbackup_user}} to {{vbackup_group}}
+      become: true  
+      ansible.builtin.user:
+        name: "{{vbackup_user}}"
+        groups: "{{vbackup_group}}"
+        append: yes
+
 
     - name: Ensure borgmatic config in place
       become: true

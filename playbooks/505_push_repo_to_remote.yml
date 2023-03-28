@@ -1,0 +1,17 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars.json
+  tasks:  
+    - name: push repo file
+      become: true
+      ansible.builtin.copy:
+        src: "/home/yell/a/repo_2023-03-28.gz"
+        dest: /home/myuser/repo.gz
+
+    - name: Unarchive the repo
+      become: true
+      ansible.builtin.unarchive:
+        src: /home/myuser/repo.gz
+        dest: /home/myuser/
+        remote_src: yes
+  

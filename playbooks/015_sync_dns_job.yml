@@ -22,5 +22,8 @@
       cron_file: ansible_dns_sync
       user: root
       
-
+  - name: Trun the script once to immediately update the ip
+    become: true
+    ansible.builtin.shell:
+      cmd: "/etc/dns_sync_script.sh"
 

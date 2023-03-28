@@ -1,3 +1,4 @@
+curl --data "username={{vgoip_user}}&password={{vgoip_pw}}" https://www.goip.de/setip?   
 {% for h in vhosts %}
     curl --data "username={{vgoip_user}}&password={{vgoip_pw}}&subdomain={{h}}" https://www.goip.de/setip?    
 {% endfor %}
