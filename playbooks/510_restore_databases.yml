@@ -1,15 +1,97 @@
 - hosts: myvhosts
+  remote_user: root
   vars_files:
     - ../vars.json
   vars_prompt:
     - name: "restore_bookstack"
       prompt: "Restore the bookstack database (yes/no)? THIS WILL ERASE THE CURRENT DATA."
-      private: no
+
     - name: "restore_nextcloud"
       prompt: "Restore the nextcloud database (yes/no)? THIS WILL ERASE THE CURRENT DATA."
-      private: no
 
   tasks:  
+  - name: Get latest backup name
+    become: true
+    environment: 
+      BORG_PASSCOMMAND: cat "/etc/.borg_password.key"
+    ansible.builtin.shell:
+      cmd: borg list --sort timestamp   repo  | grep -v '\.checkpoint$' | tail -1 |  cut -f 1 | cut -d ' ' -f 1
+    args:
+      chdir: /media/backup
+    register: version
+
+  - name: Stop nextcloud docker
+    become: true
+    become_user: "{{vnextcloud}}"
+    community.docker.docker_compose:
+      project_src: /home/{{vnextcloud}}
+      files:
+      - docker-compose.yml
+      state: absent
+    when: restore_nextcloud | bool
+
+  - name: Restoring nextcloud data
+    become: true
+    environment: 
+      BORG_PASSCOMMAND: cat "/etc/.borg_password.key"
+    ansible.builtin.shell:
+      cmd: borg extract /home/myuser/repo::{{version.stdout_lines.0}} /home/{{vnextcloud}}
+    args:
+      chdir: /
+    when: restore_nextcloud | bool
+
+  - name: Start nextcloud database
+    become: true
+    become_user: "{{vnextcloud}}"
+    community.docker.docker_compose:
+      project_src: /home/{{vnextcloud}}
+      files:
+      - docker-compose.yml
+      state: present
+      services: nextcloud-mariadb
+    when: restore_nextcloud | bool
+
+  - name: Restoring nextcloud db
+    become: true
+    become_user: "{{vnextcloud}}"
+    ansible.builtin.shell:
+      cmd: cat /home/{{vnextcloud}}/app/db/backup.sql |  docker exec -i nextcloud-mariadb mysql -u root --password='{{vnextcloud_db_root_password}}' {{vnextcloud_db_app}}
+    when: restore_nextcloud | bool   
+
+  - name: Start nextcloud docker
+    become: true
+    become_user: "{{vnextcloud}}"
+    community.docker.docker_compose:
+      project_src: /home/{{vnextcloud}}
+      files:
+      - docker-compose.yml
+      state: present
+    when: restore_nextcloud | bool
+
+
+
+
+  - name: Stop bookstack docker
+    become: true
+    become_user: "{{vbookstack}}"
+    community.docker.docker_compose:
+      project_src: /home/{{vbookstack}}
+      files:
+      - docker-compose.yml
+      state: absent
+    when: restore_bookstack | bool
+
+  - name: Start bookstack database
+    become: true
+    become_user: "{{vbookstack}}"
+    community.docker.docker_compose:
+      project_src: /home/{{vbookstack}}
+      files:
+      - docker-compose.yml
+      state: present
+      services: bookstack_db
+    when: restore_nextcloud | boo
+
   - name: Restoring bookstack db
     become: true
     become_user: "{{vbookstack}}"
@@ -18,9 +100,24 @@
     when: restore_bookstack | bool
 
   
-  - name: Restoring nextcloud db
+  - name: Restoring bookstack data
     become: true
-    become_user: "{{vnextcloud}}"
+    environment: 
+      BORG_PASSCOMMAND: cat "/etc/.borg_password.key"
     ansible.builtin.shell:
-      cmd: cat /home/{{vnextcloud}}/app/db/backup.sql |  docker exec -i nextcloud-mariadb mysql -u root --password='{{vnextcloud_db_root_password}}' {{vnextcloud_db_app}}
-    when: restore_nextcloud | bool
+      cmd: borg extract /home/myuser/repo::{{version.stdout_lines.0}} /home/{{vbookstack}}
+    args:
+      chdir: /
+    when: restore_bookstack | bool
+
+
+
+  - name: Start bookstack docker
+    become: true
+    become_user: "{{vbookstack}}"
+    community.docker.docker_compose:
+      project_src: /home/{{vbookstack}}
+      files:
+      - docker-compose.yml
+      state: present
+    when: restore_bookstack | bool

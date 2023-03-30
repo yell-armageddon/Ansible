@@ -5,6 +5,8 @@
             {"backupdir": "/home/{{vnextcloud}}/app"},
             {"backupdir": "/home/{{vmagic}}/db/backup"}
    ],
+   "local_repo_backup_path": "/home/yell/a",
+   "local_repo_backup_filename": "repo.gz",
 
    "vhosts": [
       "{{vbookstack_host}}", "{{vnextcloud_host}}", "{{vmagic_host}}"

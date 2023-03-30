@@ -54,3 +54,10 @@
         cron_file: ansible_borgmatic
         user: root
         
+    - name: provide borg password file
+      become: true
+      template:
+        src: ../templates/borg_password.j2
+        dest: "/etc/.borg_password.key"
+        backup: true
+        mode: 0400

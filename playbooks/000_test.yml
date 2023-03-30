@@ -2,18 +2,25 @@
   vars_files:
     - ../vars/samba.yml
   tasks:  
-    - name: Add the users to  group sambabackup
-      become: true  
-      ansible.builtin.user:
-        name: myuser
-        groups: "{{ item }}"
-        append: yes
-      with_items:
-        - myuser
-        -  adm
-        - cdrom 
-        - sudo
-        - dip 
-        - plugdev
-        -  lxd
-        - sambashare
+    - name: Restoring nextcloud data
+      become: true
+      environment: 
+        BORG_PASSCOMMAND: cat "/etc/.borg_password.key"
+      ansible.builtin.shell:
+        cmd: borg list --sort timestamp   repo  | grep -v '\.checkpoint$' | tail -1 |  cut -f 1 | cut -d ' ' -f 1
+      args:
+        chdir: /media/backup
+      register: version
+
+    - name: my debug
+      debug:
+        msg:         "returned value is {{version.stdout_lines}}"
+
+    - name: Restoring nextcloud data
+      become: true
+      environment: 
+        BORG_PASSCOMMAND: cat "/etc/.borg_password.key"
+      ansible.builtin.shell:
+        cmd: "borg extract /media/backup/repo::{{version.stdout_lines.0}} /home/nextcloud"
+      args:
+        chdir: /media/backup/c

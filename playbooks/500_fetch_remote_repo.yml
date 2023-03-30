@@ -13,5 +13,5 @@
       become: true
       ansible.builtin.fetch:
         src: "{{vborgmatic_backup_target}}repo.gz"
-        dest: /home/yell/a/repo_{{ ansible_date_time.date }}.gz
+        dest: "{{local_repo_backup_path}}/repo_{{ ansible_date_time.date }}.gz"
         flat: true
