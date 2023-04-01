@@ -23,6 +23,7 @@
           - acl
           - unzip
           - borgbackup
+          - zfsutils-linux
         state: latest
         update_cache: true
 

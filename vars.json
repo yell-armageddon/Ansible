@@ -14,6 +14,7 @@
 
    "vhost": "yell.goip.it",
    "vemail": "yell@gmx.de",
+   "local_zfs_key_location": "/home/yell/gits/Ansible/zfs_key",
 
    "_comment1": "variables for BOOKSTACK",
    "vbookstack": "bookstack",

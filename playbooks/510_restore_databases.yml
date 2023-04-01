@@ -17,7 +17,7 @@
     ansible.builtin.shell:
       cmd: borg list --sort timestamp   repo  | grep -v '\.checkpoint$' | tail -1 |  cut -f 1 | cut -d ' ' -f 1
     args:
-      chdir: /media/backup
+      chdir: /home/{{vbackup_user}}/
     register: version
 
   - name: Stop nextcloud docker
@@ -48,7 +48,7 @@
       files:
       - docker-compose.yml
       state: present
-      services: nextcloud-mariadb
+      services: db
     when: restore_nextcloud | bool
 
   - name: Restoring nextcloud db
@@ -90,7 +90,7 @@
       - docker-compose.yml
       state: present
       services: bookstack_db
-    when: restore_nextcloud | boo
+    when: restore_bookstack | bool
 
   - name: Restoring bookstack db
     become: true
