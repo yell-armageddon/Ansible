@@ -38,7 +38,7 @@
     become: true
     command: zpool list -Ho name {{ zfs_pool_name }}
     register: result_pool_list
-    ignore_errors: yes
+    ignore_errors: true
     changed_when: false
 
   - name: Create tank zpool       zpool create
