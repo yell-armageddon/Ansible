@@ -1,0 +1,81 @@
+{  "_comment0": "remove not used directories, otherwise backups with borgmatic will fail.",
+   "using": [
+            {"backupdir": "/home/{{vbookstack}}/config/www"},
+            {"backupdir": "/home/{{vbookstack}}/backup"},
+            {"backupdir": "/home/{{vnextcloud}}/app"},
+            {"backupdir": "/home/{{vmagic}}/db/backup"}
+   ],
+   "local_repo_backup_path": "/home/yell/a",
+   "local_repo_backup_filename": "repo.gz",
+
+   "vhosts": [
+      "{{vbookstack_host}}", "{{vnextcloud_host}}", "{{vmagic_host}}"
+   ],
+
+   "vhost": "yell.goip.it",
+   "vemail": "yell@gmx.de",
+   "local_zfs_key_location": "/home/yell/gits/Ansible/zfs_key",
+   "zfs_pool_name": "data",
+   "zfs_pool_mountpoint": "/media",
+   "zfs_key_location": "/etc/zfs_data_key",
+   
+
+
+   "_comment1": "variables for BOOKSTACK",
+   "vbookstack": "bookstack",
+   "vbookstack_compose": "/home/{{vbookstack}}/docker-compose.yml",
+   "vbookstack_db_host": "bookstack_db",
+   "vbookstack_db_app": "bookstackapp",
+   "vbookstack_db_user": "bookstack",
+   "vbookstack_db_password": "SR£tfeadscRT!",
+   "vbookstack_db_root_password": "WFAASR£tfeadsc?)as3",
+   "vbookstack_host": "bookstack.{{vhost}}",
+
+   "_comment2": "variables for NEXTXCLOUD",
+   "vnextcloud": "nextcloud",
+   "vnextcloud_compose": "/home/{{vnextcloud}}/docker-compose.yml",
+   "vnextcloud_db_app": "nextcloud",
+   "vnextcloud_db_user": "nextcloud",
+   "vnextcloud_db_password": "SR£tfeadscRT!",
+   "vnextcloud_db_root_password": "WFAASR£tfeadsc?)as3",
+   "vnextcloud_host": "nextcloud.{{vhost}}",
+   "vnextcloud_letsencrypt_email": "drettstadt@gmail.com",
+
+   "_comment3": "variables for NGINX",
+   "vnginx": "nginx",
+   "vnginx_compose": "/home/{{vnginx}}/docker-compose.yml",
+   "vnginx_host": "{{vhost}}",
+   "vnginx_letsencrypt_email": "drettstadt@gmail.com",
+   "vnginx_conf": "/home/{{vnginx}}/proxy/conf.d/default.conf",
+
+
+   "_comment4": "variables for borgmatic",
+   "vborgmatic_backup_target": "/media/backup/",
+   "vborgmatic_repo": "repo",
+   "vborgmatic_pw": "geheim1",
+   "vbackup_group": "mybackup",
+   "vbackup_user": "mybackupuser",  
+
+   "_comment5": "variables for rails application",
+   "vmagic": "magic",
+   "vmagic_host": "magic.{{vhost}}",
+   "vmagic_email_server_address": "mail.gmx.net",
+   "vmagic_email_server_port": "465",
+   "vmagic_email_address": "",
+   "vmagic_email_password": "",
+   "vmagic_email_authentication": "plain",
+   "vmagic_email_ttls": "true",
+   "vmagic_email_domain": "gmx.net",
+   "vmagic_db_root_pw": "123456",
+   "vmagic_db_user": "sec_user",
+   "vmagic_db_pw": "geheim123sql",
+   "vmagic_db": "Magic",
+   "vmagic_compose": "/home/{{vmagic}}/docker-compose.yml",
+   "vmagic_dummy_user_email": "dummy@dummy.com",
+   "vmagic_dummy_user_pw": "!123Asdasda",
+
+   "_comment6": "goip username and password of the router the use.",
+   "vgoip_user": "iiEIkFtwxXHQWfj",
+   "vgoip_pw": "z1LxIDWBCp9muus"
+
+}
