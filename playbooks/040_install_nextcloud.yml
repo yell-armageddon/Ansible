@@ -48,6 +48,16 @@
       files:
       - docker-compose.yml 
 
+  - name: Ensure additional config is in place "/home/{{ vnextcloud }}/app/config/add.config.php" 
+    become: true
+    template:
+      src: ../templates/nextcloud_add_config.j2
+      dest: "/home/{{ vnextcloud }}/app/config/add.config.php"
+      backup: true
+      mode: 0640
+      owner: www-data
+      group: www-data
+
   - name: Ensure the database backup script is inplace
     become: true
     become_user: "{{vnextcloud}}"
