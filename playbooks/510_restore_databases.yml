@@ -10,6 +10,14 @@
       prompt: "Restore the nextcloud database (yes/no)? THIS WILL ERASE THE CURRENT DATA."
 
   tasks:  
+
+  - name: provide borg password file
+    become: true
+    template:
+      src: ../templates/borg_password.j2
+      dest: "/etc/.borg_password.key"
+      backup: true
+      mode: 0400
   - name: Get latest backup name
     become: true
     environment: 

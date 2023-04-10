@@ -54,7 +54,7 @@
    "vborgmatic_repo": "repo",
    "vborgmatic_pw": "geheim1",
    "vbackup_group": "mybackup",
-  
+   "vbackup_user": "mybackupuser",  
 
    "_comment5": "variables for rails application",
    "vmagic": "magic",
