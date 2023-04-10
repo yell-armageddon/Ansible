@@ -47,7 +47,7 @@
    "vnginx_host": "{{vhost}}",
    "vnginx_letsencrypt_email": "drettstadt@gmail.com",
    "vnginx_conf": "/home/{{vnginx}}/proxy/conf.d/default.conf",
-   "vnginx_nextcloud_conf": "/home/{{vnginx}}/proxy/conf.d/nextcloud.conf",
+
 
    "_comment4": "variables for borgmatic",
    "vborgmatic_backup_target": "/media/backup/",

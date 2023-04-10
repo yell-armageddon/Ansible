@@ -32,3 +32,12 @@
       project_src: /home/{{vnginx}}
       files:
       - docker-compose.yml 
+
+  - name: Ensure additional config is in place "{{ vnginx }}/proxy/conf.d/add.config"
+    become: true
+    become_user: "{{vnginx}}"
+    template:
+      src: ../templates/nginx_add_config.j2
+      dest: "{{ vnginx }}/proxy/conf.d/add.config"
+      backup: true
+      mode: 0640
