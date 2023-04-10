@@ -35,6 +35,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       - VIRTUAL_HOST={{vnextcloud_host}}
+      - LETSENCRYPT_HOST={{vnextcloud_host}}
+      - LETSENCRYPT_EMAIL={{vnginx_letsencrypt_email}}
       
     restart: unless-stopped
 volumes:

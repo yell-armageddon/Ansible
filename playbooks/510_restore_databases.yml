@@ -15,7 +15,7 @@
     environment: 
       BORG_PASSCOMMAND: cat "/etc/.borg_password.key"
     ansible.builtin.shell:
-      cmd: borg list --sort timestamp   repo  | grep -v '\.checkpoint$' | tail -1 |  cut -f 1 | cut -d ' ' -f 1
+      cmd: borg list --sort timestamp   {{vborgmatic_backup_target}}{{vborgmatic_repo}}  | grep -v '\.checkpoint$' | tail -1 |  cut -f 1 | cut -d ' ' -f 1
     args:
       chdir: /home/{{vbackup_user}}/
     register: version
@@ -35,7 +35,7 @@
     environment: 
       BORG_PASSCOMMAND: cat "/etc/.borg_password.key"
     ansible.builtin.shell:
-      cmd: borg extract /home/myuser/repo::{{version.stdout_lines.0}} /home/{{vnextcloud}}
+      cmd: borg extract  {{vborgmatic_backup_target}}{{vborgmatic_repo}}::{{version.stdout_lines.0}} /home/{{vnextcloud}}
     args:
       chdir: /
     when: restore_nextcloud | bool

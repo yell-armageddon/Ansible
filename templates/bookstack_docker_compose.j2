@@ -17,6 +17,8 @@ services:
       - DB_PASS={{vbookstack_db_password}}
       - DB_DATABASE={{vbookstack_db_app}}
       - VIRTUAL_HOST={{vbookstack_host}}
+      - LETSENCRYPT_HOST={{vbookstack_host}}
+      - LETSENCRYPT_EMAIL={{vnginx_letsencrypt_email}}
     volumes:
       - /home/{{vbookstack}}/config:/config
 

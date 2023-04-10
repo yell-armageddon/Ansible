@@ -2,13 +2,10 @@
   vars_files:
     - ../vars.json
   vars:
-    zfs_key_location: /etc/zfs_key
-    zfs_pool_name: tank
-    zfs_pool_mountpoint: /media/
     zfs_pool_devices:
-      - sdc
+      - sdd
     zfs_pool_state: present
-    zfs_O_options:
+    zfs_O_options: ## encryption options
       - "encryption=on"
       - "keyformat=raw"
       - "keylocation=file://{{zfs_key_location}}"
@@ -63,7 +60,7 @@
   - name: Create a new data set "backup"
     become: true
     community.general.zfs:
-      name: tank/backup
+      name: "{{zfs_pool_name}}/backup"
       state: present
       extra_zfs_properties:
         setuid: off
@@ -73,7 +70,7 @@
   - name: Create a new data set "samba"
     become: true
     community.general.zfs:
-      name: tank/samba
+      name: "{{zfs_pool_name}}/samba"
       state: present
       extra_zfs_properties:
         setuid: off
@@ -86,7 +83,7 @@
   - name: Create a new file system /home/{{vnextcloud}}
     become: true
     community.general.zfs:
-      name: tank/nextcloud
+      name: "{{zfs_pool_name}}/nextcloud"
       state: present
       extra_zfs_properties:
         setuid: off
@@ -95,6 +92,17 @@
     - create_zfs | bool
     - setup_zfs | bool
 
+
+  - name: Add the user nextcloud
+    become: true  
+    ansible.builtin.user:
+      name: "{{vnextcloud}}"
+      comment: nextcloud docker user
+      uid: 1041
+      group: docker
+    when:
+      - create_zfs | bool
+      - setup_zfs | bool
 
   - name: Set zfs permissions
     become: true  
@@ -107,3 +115,19 @@
     when:
       - create_zfs | bool
       - setup_zfs | bool
+
+
+  - name: Service to auto load zfs key
+    become: true
+    template:
+      src: ../templates/zfs_load_key_service.j2
+      dest: /etc/systemd/system/zfs-load-key.service
+      backup: true
+      mode: 0600
+
+  - name: Start zfs service
+    become: true
+    ansible.builtin.service:
+      name: "zfs-load-key"
+      enabled: yes
+      state: started

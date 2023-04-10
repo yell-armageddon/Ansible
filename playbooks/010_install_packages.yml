@@ -24,6 +24,10 @@
           - unzip
           - borgbackup
           - zfsutils-linux
+          - cron
+          - powertop
+          - smartmontools
+          - rsync
         state: latest
         update_cache: true
 

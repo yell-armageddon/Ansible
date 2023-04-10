@@ -15,6 +15,11 @@
    "vhost": "yell.goip.it",
    "vemail": "yell@gmx.de",
    "local_zfs_key_location": "/home/yell/gits/Ansible/zfs_key",
+   "zfs_pool_name": "data",
+   "zfs_pool_mountpoint": "/media",
+   "zfs_key_location": "/etc/zfs_data_key",
+   
+
 
    "_comment1": "variables for BOOKSTACK",
    "vbookstack": "bookstack",
@@ -49,7 +54,7 @@
    "vborgmatic_repo": "repo",
    "vborgmatic_pw": "geheim1",
    "vbackup_group": "mybackup",
-   "vbackup_user": "myuser",
+  
 
    "_comment5": "variables for rails application",
    "vmagic": "magic",

@@ -1,5 +1,5 @@
 ---
-samba_shares_root: /media/samba
+samba_shares_root: "{{zfs_pool_mountpoint}}/samba"
 samba_configuration: /etc/samba/smb.conf
 samba_workgroup: 'WORKGROUP'
 samba_server_string: 'Fileserver %m'

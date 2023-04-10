@@ -24,12 +24,6 @@
         group: "{{vbackup_group}}"
         mode: 750
 
-    - name: add user {{vbackup_user}} to {{vbackup_group}}
-      become: true  
-      ansible.builtin.user:
-        name: "{{vbackup_user}}"
-        groups: "{{vbackup_group}}"
-        append: yes
 
 
     - name: Ensure borgmatic config in place
