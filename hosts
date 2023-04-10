@@ -1,17 +1,8 @@
 [myvhosts]
-192.168.178.168
+192.168.1.15
 [myvhosts:vars]
 ansible_user=myuser
 ansible_password=changeme
-mykey="{{ lookup('file', '/home/yell/.ssh/id_ubuntuserver.pub' ) }}"
+mykey="{{ lookup('file', '/home/{{control_node_user}}/.ssh/id_ubuntuserver.pub' ) }}"
 ansible_become_password=changeme
-ansible_ssh_private_key_file=/home/yell/.ssh/id_ubuntuserver
-
-[myvhosts2]
-localhost:2222
-[myvhosts2:vars]
-ansible_user=vboxuser
-ansible_password=changeme
-mykey="{{ lookup('file', '/home/yell/.ssh/id_ubuntuserver.pub' ) }}"
-ansible_become_password=changeme
-ansible_ssh_private_key_file=/home/yell/.ssh/id_ubuntuserver
+ansible_ssh_private_key_file=/home/{{control_node_user}}/.ssh/id_ubuntuserver

@@ -2,20 +2,13 @@
   vars_files:
     - ../vars/samba.yml
     - ../vars.json
-  vars:
-    zfs_pool_name: tank
-    zfs_pool_mountpoint: /media/
-    zfs_pool_devices:
-      - sdc
-    zfs_pool_state: present
-    zfs_pool_options:
-      - "ashift=12"
-      - 
+
 
   tasks:  
-    - name: create a local repo copy
-      become: true
-      ansible.builtin.fetch:
-        src: "/etc/zfs_key"
-        dest: "/home/yell/zfs_key"
-        flat: true
+  - name: get the username running the deploy
+    become: false
+    local_action: command whoami
+    register: username_on_the_host
+
+  
+  - debug: var={{ansible_user_id}}
