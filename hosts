@@ -1,8 +1,8 @@
 [myvhosts]
 192.168.1.15
 [myvhosts:vars]
-ansible_user={{control_node_user}}
+ansible_user=remote_user
 ansible_password=changeme
-ansible_ssh_private_key_file_lookup="{{ lookup('file', '/home/{{control_node_user}}/.ssh/id_ubuntuserver.pub' ) }}"
+ansible_ssh_private_key_file_lookup="{{ lookup('file', '/home/remote_user/.ssh/id_ubuntuserver.pub' ) }}"
 ansible_become_password=changeme
-ansible_ssh_private_key_file=/home/{{control_node_user}}/.ssh/id_ubuntuserver
+ansible_ssh_private_key_file=/home/remote_user/.ssh/id_ubuntuserver

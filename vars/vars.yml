@@ -5,6 +5,7 @@ control_node:
   zfs_key_location: '/home/{{ local_user }}/AnsibleSecrets/zfs_key'
   luks_key_location: '/home/{{ local_user }}/AnsibleSecrets/luks_key'
 
+hdd_logs: /root
 # DNS entries
 dns:
   host: goip.it

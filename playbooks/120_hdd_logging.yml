@@ -1,0 +1,7 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars/vars.yml
+  tasks:  
+    - name: Enable Borgmatic
+      ansible.builtin.include_tasks:
+        file: ../tasks/120_hdd_logging.yml

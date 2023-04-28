@@ -1,0 +1,28 @@
+
+  - name: smart value extraction script is in place
+    become: true
+    template:
+      src: ../templates/hdd_smart_values.j2
+      dest: "/etc/hdd_smart.sh"
+      backup: true
+      mode: 0640
+
+  - name: smart value extraction script is in place
+    become: true
+    template:
+      src: ../templates/hdd_report.j2
+      dest: "/etc/hdd_smart_report.sh"
+      backup: true
+      mode: 0640
+
+  - name: schedule daily log of smart values
+    become: true      
+    ansible.builtin.cron:
+      name: "check dirs"
+      minute: "45"
+      hour: "23"
+      job: 
+        bash /etc/hdd_smart_report.sh
+      cron_file: ansible_hdd_smart_values
+      user: root
+
