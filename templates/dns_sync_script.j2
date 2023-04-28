@@ -1,4 +1,9 @@
-curl --data "username={{vgoip_user}}&password={{vgoip_pw}}" https://www.goip.de/setip?   
-{% for h in vhosts %}
-    curl --data "username={{vgoip_user}}&password={{vgoip_pw}}&subdomain={{h}}" https://www.goip.de/setip?    
-{% endfor %}
+curl --data "username={{dns.user}}&password={{dns.password}}" https://www.goip.de/setip?   
+
+{% if app_nextcloud.using  %}
+curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_nextcloud.host}}" https://www.goip.de/setip?    
+{% endif %}
+
+{% if app_bookstack.using  %}
+curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_bookstack.host}}" https://www.goip.de/setip?    
+{% endif %}

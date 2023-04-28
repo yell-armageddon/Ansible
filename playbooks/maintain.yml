@@ -2,7 +2,7 @@
   vars_files:
     - ../vars/vars.yml
 
-  tasks:
+  tasks:  
   - name: Include task list in play
     ansible.builtin.include_tasks:
-      file: ../tasks/040_install_nextcloud.yml
+      file: ../tasks/011_update_all_packages.yml

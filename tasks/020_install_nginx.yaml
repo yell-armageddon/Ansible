@@ -1,0 +1,40 @@
+
+  - name: Add the user {{usernames.nginx}}
+    become: true  
+    ansible.builtin.user:
+      name: "{{usernames.nginx}}"
+      comment: vnginx docker user
+      uid: 1042
+      group: docker
+  
+  - name: Create a network nginx_proxy
+    become: true
+    becomce_user: "{{usernames.nginx}}"
+    docker_network:
+      name: net_nginx_proxy     
+
+  - name: Ensure docker compose config in place
+    become: true
+    becomce_user: "{{usernames.nginx}}"
+    template:
+      src: ../templates/nginx_docker_compose.j2
+      dest: "{{ app_nginx.docker_compose_target }}"
+      backup: true
+      mode: 0640
+
+  - name: deploy Docker Compose stack
+    become: true
+    becomce_user: "{{usernames.nginx}}"
+    community.docker.docker_compose:
+      project_src: /home/{{usernames.nginx}}
+      files:
+      - docker-compose.yml 
+
+  - name: Ensure additional config is in place "/home/{{usernames.nginx}}/proxy/conf.d/add.config"
+    become: true
+    becomce_user: "{{usernames.nginx}}"
+    template:
+      src: ../templates/nginx_add_config.j2
+      dest: "/home/{{usernames.nginx}}/proxy/conf.d/add.config"
+      backup: true
+      mode: 0640

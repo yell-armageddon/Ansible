@@ -1,2 +1,2 @@
 #!/bin/bash
-docker exec  nextcloud-mariadb mysqldump --opt --default-character-set=utf8mb4  -u {{vnextcloud_db_user}}  --password='{{vnextcloud_db_password}}' {{vnextcloud_db_app}} > /home/{{vnextcloud}}/app/db/backup.sql 2>&1
+docker exec  nextcloud-mariadb mysqldump --opt --default-character-set=utf8mb4  -u {{app_nextcloud.database_user}}  --password='{{app_nextcloud.dabase_password}}' {{app_nextcloud.database}} > /home/{{usernames.nextcloud}}/app/db/backup.sql 2>&1

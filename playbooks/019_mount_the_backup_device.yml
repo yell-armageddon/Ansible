@@ -1,7 +1,8 @@
 - hosts: myvhosts
   vars_files:
     - ../vars/vars.yml
+
   tasks:
-  - name: Install NGINX
+  - name: Mount LUKS
     ansible.builtin.include_tasks:
-      file: ../tasks/020_install_nginx.yaml  
+      file: ../tasks/019_mount_the_backup_device.yml

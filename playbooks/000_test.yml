@@ -1,14 +1,29 @@
 - hosts: myvhosts
   vars_files:
-    - ../vars/samba.yml
-    - ../vars.json
+    - ../vars/vars.yml
+#    - ../vars/samba.yml
+ #   - ../vars/vars.yml
 
 
   tasks:  
-  - name: get the username running the deploy
-    become: false
-    local_action: command whoami
-    register: username_on_the_host
-
   
-  - debug: var={{ansible_user_id}}
+  - debug: var=app_nginx.docker_compose_target
+  - debug: var=inventory_hostname
+  - debug: var=app_b
+
+  - name: Set Apache URL
+    set_fact:
+      zfs_O_options: ## encryption options
+            - "encryption=on"
+            - "keyformat=raw"
+            - "keylocation=file://{{zfs.key_location}}"
+
+
+  - debug: var=zfs_O_options
+
+
+  - name: Include task list in play
+    ansible.builtin.include_tasks:
+      file:
+        -  ../tasks/001_copysshkey.yml
+        -  ../tasks/010_install_packages.yml

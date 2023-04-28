@@ -1,0 +1,59 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars/vars.yml
+
+  vars_prompt:
+    - name: "setup_zfs"
+      prompt: "Task 017: Should ZFS be set-up? This might cause loss of data! (yes/no) "
+    - name: "create_zfs"
+      prompt: "Task 017: Create a seperate zfs for nextcloud and mount it to /home/{{usersnames.nextcloud}} (yes/no)?"
+    - name: "setup_luks"
+      prompt: "Task 018: Create new LUKS partition/disk? This might cause data loss. (yes/no)"
+
+  tasks:  
+  - name: Copy SSH key
+    ansible.builtin.include_tasks:
+      file: ../tasks/001_copysshkey.yml
+
+  - name: Install APT packages and docker
+    ansible.builtin.include_tasks:
+      file: ../tasks/010_install_packages.yml
+
+  - name: Setup the GOIP DNS update job
+    ansible.builtin.include_tasks:
+      file: ../tasks/015_sync_dns_job.yml 
+
+# above prompts check whether this should be run
+  - name: Setup ZFS
+    ansible.builtin.include_tasks:
+      file: ../tasks/017_setup_zfs.yml
+
+  - name: Setup LUKS
+    ansible.builtin.include_tasks:
+      file: ../tasks/018_create_backup_device.yml
+
+  - name: Mount LUKS
+    ansible.builtin.include_tasks:
+      file: ../tasks/019_mount_the_backup_device.yml
+
+  - name: Install NGINX
+    ansible.builtin.include_tasks:
+      file: ../tasks/020_install_nginx.yaml  
+
+  - name: Install Bookstack docker
+    ansible.builtin.include_tasks:
+      file: ../tasks/030_install_bookstack.yml
+
+  - name: Install Nextcloud docker
+    ansible.builtin.include_tasks:
+      file: ../tasks/040_install_nextcloud.yml
+
+  - name: Enable Borgmatic
+    ansible.builtin.include_tasks:
+      file: ../tasks/100_enable_borgmatic.yml
+
+  - name: Install and enable samba
+    ansible.builtin.include_tasks:
+      file: ../tasks/200_install_samba.yml
+
+ 

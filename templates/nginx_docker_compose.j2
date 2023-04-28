@@ -24,7 +24,7 @@ services:
     networks:
       - net_nginx_proxy
     environment:
-      - DEFAULT_EMAIL={{vemail}}
+      - DEFAULT_EMAIL={{app_nginx.letsencrypt_email}}
       - NGINX_PROXY_CONTAINER=proxy
     volumes_from:
       - proxy
@@ -38,8 +38,8 @@ services:
     networks:
       - net_nginx_proxy
     environment:
-      - VIRTUAL_HOST={{vhost}}
-      - LETSENCRYPT_HOST={{vhost}}
+      - VIRTUAL_HOST={{dns.host}}
+      - LETSENCRYPT_HOST={{dns.host}}
     restart: always
 networks:
   net_nginx_proxy:

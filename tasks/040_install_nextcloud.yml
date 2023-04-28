@@ -1,0 +1,70 @@
+  - name: Add the user nextcloud
+    become: true  
+    ansible.builtin.user:
+      name: "{{usernames.nextcloud}}"
+      comment: nextcloud docker user
+      uid: 1041
+      group: docker
+  
+      
+  - name: Create a network net_nextcloud
+    become: true
+    become_user: "{{usernames.nextcloud}}"
+    docker_network:
+      name: net_nextcloud
+
+  - name: Add a container to a network
+    become: true
+    become_user: "{{usernames.nextcloud}}"
+    docker_network:
+      name: net_nextcloud
+      connected:
+        - proxy
+        - nginx_web_1
+  
+
+  - name: Ensure docker compose config in place
+    become: true
+    become_user: "{{usernames.nextcloud}}"
+    template:
+      src: ../templates/nextcloud_docker_compose.j2
+      dest: "{{ app_nextcloud.docker_compose_target }}"
+      backup: true
+      mode: 0640
+
+  - name: deploy Docker Compose stack
+    become: true
+    become_user: "{{usernames.nextcloud}}"
+    community.docker.docker_compose:
+      project_src: /home/{{{{usernames.nextcloud}}}}
+      files:
+      - docker-compose.yml 
+
+  - name: Ensure additional config is in place "/home/{{ {{usernames.nextcloud}} }}/app/config/add.config.php" 
+    become: true
+    template:
+      src: ../templates/nextcloud_add_config.j2
+      dest: "/home/{{ {{usernames.nextcloud}} }}/app/config/add.config.php"
+      backup: true
+      mode: 0640
+      owner: www-data
+      group: www-data
+
+  - name: Ensure the database backup script is inplace
+    become: true
+    become_user: "{{usernames.nextcloud}}"
+    template:
+      src: ../templates/nextcloud_db_backup.j2
+      dest: "/home/{{ {{usernames.nextcloud}}}}/db_backup.sh"
+      backup: true
+      mode: 0750
+
+  - name: schedule a database backup every night
+    become: true      
+    ansible.builtin.cron:
+      name: "check dirs"
+      minute: "0"
+      hour: "3"
+      job: "/home/{{ usernames.nextcloud}}/db_backup.sh"
+      cron_file: ansible_nextcloud
+      user: root

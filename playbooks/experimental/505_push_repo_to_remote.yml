@@ -1,0 +1,24 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars/vars.yml
+  tasks:  
+    - name: push repo file
+      become: true
+      ansible.builtin.copy:
+        src: "{{local_repo_backup_path}}/{{ local_repo_backup_filename }}"
+        dest: /home/{{vbackup_user}}/repo.gz
+
+    - name: Unarchive the repo
+      become: true
+      ansible.builtin.unarchive:
+        src: /home/{{vbackup_user}}/repo.gz
+        dest: /home/{{vbackup_user}}/
+        remote_src: yes
+    
+    - name: provide borg password file
+      become: true
+      template:
+        src: ../templates/borg_password.j2
+        dest: "/etc/.borg_password.key"
+        backup: true
+        mode: 0400

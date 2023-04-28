@@ -1,14 +1,12 @@
 - hosts: myvhosts
   vars_files:
-    - ../vars.json
+    - ../vars/vars.yml
   vars:
-    zfs_pool_devices:
-      - sdd
     zfs_pool_state: present
     zfs_O_options: ## encryption options
       - "encryption=on"
       - "keyformat=raw"
-      - "keylocation=file://{{zfs_key_location}}"
+      - "keylocation=file://{{zfs.key_location}}"
     zfs_pool_options:
       - "ashift=12"
       - "feature@encryption=enabled"
@@ -16,118 +14,12 @@
     - name: "setup_zfs"
       prompt: "Did you check this file manually? (yes/no) "
     - name: "create_zfs"
-      prompt: "Create a seperate zfs for nextcloud and mount it to /home/{{vnextcloud}} (yes/no)?"
+      prompt: "Create a seperate zfs for nextcloud and mount it to /home/{{usersnames.nextcloud}} (yes/no)?"
 
 ## zfs key creation
 ## dd if=/dev/urandom of=zfs_key bs=32 count=1
 
   tasks:  
-
-  - name: Ensure the zfs key is in place "{{zfs_key_location}}"
-    become: true
-    template:
-      src: "{{local_zfs_key_location}}"
-      dest: "{{zfs_key_location}}"
-      backup: true
-      mode: 0600
-
-  - name: check whether the ZFS pool {{ zfs_pool_name }} exists
-    become: true
-    command: zpool list -Ho name {{ zfs_pool_name }}
-    register: result_pool_list
-    ignore_errors: true
-    changed_when: false
-
-  - name: Create tank zpool       zpool create
-      {{'-O' if zfs_O_options else ''  }} {{ zfs_O_options | join(' -O ') }}
-      {{ '-o' if zfs_pool_options else ''  }} {{ zfs_pool_options | join(' -o ') }}
-      {{ '-m ' + zfs_pool_mountpoint if zfs_pool_mountpoint else '' }}
-      {{ zfs_pool_name }}
-      {{ zfs_pool_devices | join(' ') }}
-    become: true
-    command: >-
-      zpool create
-      {{'-O' if zfs_O_options else ''  }} {{ zfs_O_options | join(' -O ') }}
-      {{ '-o' if zfs_pool_options else ''  }} {{ zfs_pool_options | join(' -o ') }}
-      {{ '-m ' + zfs_pool_mountpoint if zfs_pool_mountpoint else '' }}
-      {{ zfs_pool_name }}
-      {{ zfs_pool_devices | join(' ') }}
-    when:
-      - zfs_pool_state | default('present') == 'present'
-      - result_pool_list.rc == 1
-      - setup_zfs | bool
-
-  - name: Create a new data set "backup"
-    become: true
-    community.general.zfs:
-      name: "{{zfs_pool_name}}/backup"
-      state: present
-      extra_zfs_properties:
-        setuid: off
-    when:
-      - setup_zfs | bool
-
-  - name: Create a new data set "samba"
-    become: true
-    community.general.zfs:
-      name: "{{zfs_pool_name}}/samba"
-      state: present
-      extra_zfs_properties:
-        setuid: off
-    when:
-      - setup_zfs | bool
-
-
-
-
-  - name: Create a new file system /home/{{vnextcloud}}
-    become: true
-    community.general.zfs:
-      name: "{{zfs_pool_name}}/nextcloud"
-      state: present
-      extra_zfs_properties:
-        setuid: off
-        mountpoint: /home/{{vnextcloud}}
-    when: 
-    - create_zfs | bool
-    - setup_zfs | bool
-
-
-  - name: Add the user nextcloud
-    become: true  
-    ansible.builtin.user:
-      name: "{{vnextcloud}}"
-      comment: nextcloud docker user
-      uid: 1041
-      group: docker
-    when:
-      - create_zfs | bool
-      - setup_zfs | bool
-
-  - name: Set zfs permissions
-    become: true  
-    ansible.builtin.file:
-      state: directory
-      path: "/home/{{vnextcloud}}"
-      owner: nextcloud
-      group: docker
-      mode: '0750'
-    when:
-      - create_zfs | bool
-      - setup_zfs | bool
-
-
-  - name: Service to auto load zfs key
-    become: true
-    template:
-      src: ../templates/zfs_load_key_service.j2
-      dest: /etc/systemd/system/zfs-load-key.service
-      backup: true
-      mode: 0600
-
-  - name: Start zfs service
-    become: true
-    ansible.builtin.service:
-      name: "zfs-load-key"
-      enabled: yes
-      state: started
+  - name: Setup ZFS
+    ansible.builtin.include_tasks:
+      file: ../tasks/017_setup_zfs.yml

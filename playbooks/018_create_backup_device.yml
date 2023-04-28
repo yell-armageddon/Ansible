@@ -1,0 +1,11 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars/vars.yml
+  vars_prompt:
+    - name: "setup_luks"
+      prompt: "This might DELETE your luks partiton/disk. Continue? (yes/no)"
+
+  tasks:
+  - name: Setup LUKS
+    ansible.builtin.include_tasks:
+      file: ../tasks/018_create_backup_device.yml

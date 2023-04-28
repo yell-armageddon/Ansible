@@ -8,7 +8,7 @@ Requires=zfs-import.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/sbin/zfs load-key {{zfs_pool_name}}
+ExecStart=/sbin/zfs load-key {{zfs.pool_name}}
 
 [Install]
 WantedBy=zfs-mount.service

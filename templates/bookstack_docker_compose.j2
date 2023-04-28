@@ -11,16 +11,16 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - APP_URL=https://{{vbookstack_host}}
-      - DB_HOST={{vbookstack_db_host}}
-      - DB_USER={{vbookstack_db_user}}
-      - DB_PASS={{vbookstack_db_password}}
-      - DB_DATABASE={{vbookstack_db_app}}
-      - VIRTUAL_HOST={{vbookstack_host}}
-      - LETSENCRYPT_HOST={{vbookstack_host}}
-      - LETSENCRYPT_EMAIL={{vnginx_letsencrypt_email}}
+      - APP_URL=https://{{app_bookstack.host}}
+      - DB_HOST={{app_bookstack.database_host}}
+      - DB_USER={{app_bookstack.database_user}}
+      - DB_PASS={{app_bookstack.database_password}}
+      - DB_DATABASE={{app_bookstack.database}}
+      - VIRTUAL_HOST={{app_bookstack.host}}
+      - LETSENCRYPT_HOST={{app_bookstack.host}}
+      - LETSENCRYPT_EMAIL={{app_nginx.letsencrypt_email}}
     volumes:
-      - /home/{{vbookstack}}/config:/config
+      - /home/{{usersnames.bookstack}}/config:/config
 
 
     ports:
@@ -37,14 +37,14 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - MYSQL_ROOT_PASSWORD={{vbookstack_db_root_password}}
+      - MYSQL_ROOT_PASSWORD={{app_bookstack.database_root_password}}
       - TZ=Europe/London
-      - MYSQL_DATABASE={{vbookstack_db_app}}
-      - MYSQL_USER={{vbookstack_db_user}}
-      - MYSQL_PASSWORD={{vbookstack_db_password}}
+      - MYSQL_DATABASE={{app_bookstack.database}}
+      - MYSQL_USER={{app_bookstack.database_user}}
+      - MYSQL_PASSWORD={{app_bookstack.database_password}}
     volumes:
-      - /home/{{vbookstack}}/dbconfig:/config
-      - /home/{{vbookstack}}/backup:/backup
+      - /home/{{usersnames.bookstack}}/dbconfig:/config
+      - /home/{{usersnames.bookstack}}/backup:/backup
     restart: unless-stopped
 
 networks:

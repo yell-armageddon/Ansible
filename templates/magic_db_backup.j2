@@ -1,2 +1,0 @@
-#!/bin/bash
-docker exec  magic_db mysqldump --opt --default-character-set=utf8mb4  -u {{vmagic_db_user}}  --password='{{vmagic_db_pw}}' Magic > /home/{{vmagic}}/db/backup/backup.sql 2>&1

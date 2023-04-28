@@ -11,10 +11,10 @@ services:
       - db:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - MYSQL_ROOT_PASSWORD={{vnextcloud_db_root_password}}
-      - MYSQL_PASSWORD={{vnextcloud_db_password}}
-      - MYSQL_DATABASE={{vnextcloud_db_app}}
-      - MYSQL_USER={{vnextcloud_db_user}}
+      - MYSQL_ROOT_PASSWORD={{app_nextcloud.database_root_password}}
+      - MYSQL_PASSWORD={{app_nextcloud.database_password}}
+      - MYSQL_DATABASE={{app_nextcloud.database}}
+      - MYSQL_USER={{app_nextcloud.database_user}}
     restart: unless-stopped
 
   app:
@@ -34,9 +34,9 @@ services:
       - ./app/themes:/var/www/html/themes
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - VIRTUAL_HOST={{vnextcloud_host}}
-      - LETSENCRYPT_HOST={{vnextcloud_host}}
-      - LETSENCRYPT_EMAIL={{vnginx_letsencrypt_email}}
+      - VIRTUAL_HOST={{app_nextcloud.host}}
+      - LETSENCRYPT_HOST={{app_nextcloud.host}}
+      - LETSENCRYPT_EMAIL={{app_nginx.letsencrypt_email}}
       
     restart: unless-stopped
 volumes:

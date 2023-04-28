@@ -1,7 +1,8 @@
 - hosts: myvhosts
   vars_files:
     - ../vars/vars.yml
-  tasks:
-  - name: Install NGINX
+  become: true
+  tasks:  
+  - name: Copy SSH key
     ansible.builtin.include_tasks:
-      file: ../tasks/020_install_nginx.yaml  
+      file: ../tasks/001_copysshkey.yml

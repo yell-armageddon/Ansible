@@ -1,0 +1,86 @@
+# control node describes the local machine where ansible is run.
+control_node_user: myLinuxUser
+control_node:
+  repo_backup_path: '/home/{{ local_user }}/AnsibleBackup'
+  zfs_key_location: '/home/{{ local_user }}/AnsibleSecrets/zfs_key'
+  luks_key_location: '/home/{{ local_user }}/AnsibleSecrets/luks_key'
+
+# DNS entries
+dns:
+  host: goip.it
+  user: IfjdsaKTET
+  password: dfERFXCC93reX
+
+#host:
+#  nextcloud: nextcloud.{{dns.host}}
+#  bookstack: bookstack.{{dns.host}}
+
+# ZFS configuration
+## ZFS is set up as two mirrored devices
+## specify the devices to be used.
+zfs:
+   pool_name: data
+   pool_mountpoint: /media
+   key_location: /etc/zfs_data_key
+   pool_devices:
+    - /dev/disk/by-id/a
+    - /dev/disk/by-id/b
+
+#LUKS setup
+## this device is used as a additional backup
+luks:
+  # /dev/disk/by-id/{{device_id}} specifies the device to be used
+  device_id: scsi-3500014a000000001
+  key_location: /etc/luks_key_2
+  mountpoint: /backup
+  mapper_name: dm_crypt-2
+
+# Backups
+## backups are relying on daily borgmatic runs to the ZFS and LUKS devices.
+borgmatic:
+  repo_one: /media/backup/repo
+  repo_two: /backup/repo
+  passhprase: secret1
+  group: mybackup
+  user: mybackupuser
+## specify additional paths to add to the repo. list cannot be empty.
+  additional_backup_dirs:
+    - /root
+
+# Docker container
+## list of variables relevant for each docker container
+## if app_<docker>.using is false, the container will not be used.
+
+## usernames running the individual docker container.
+usernames:
+  nginx: nginx
+  nextcloud: nextcloud
+  bookstack: bookstack
+
+app_nginx:
+  user: nginx
+  docker_compose_target: "/home/{{usernames.nginx}}/docker-compose.yml"
+  letsencrypt_email: a@b.c
+
+app_nextcloud:
+  using: true
+  host: nextcloud.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.nextcloud}}/docker-compose.yml
+  database: "{{usernames.nextcloud}}"
+  database_user: "{{usernames.nextcloud}}"
+  database_password: "SR£tfeadscRT!"
+  database_root_password: "WFAASR£tfeadsc?)as3"
+  backupdir: "/home/{{usernames.nextcloud}}/app"
+
+
+app_bookstack:
+  using: true
+  host: bookstack.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.bookstack}}/docker-compose.yml
+  database: "{{usernames.bookstack}}app"
+  database_host: "{{usernames.bookstack}}_db"
+  database_user: "{{usernames.bookstack}}"
+  database_password: "SR£tfeadscRT!"
+  database_root_password: "WFAASR£tfeadsc?)as3"
+  backupdir: /home/{{usernames.bookstack}}/config/www
+  backupdb: /home/{{usernames.bookstack}}/backup

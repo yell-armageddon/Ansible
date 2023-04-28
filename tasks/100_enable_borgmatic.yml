@@ -1,0 +1,53 @@
+    - name: create folders
+      become: true
+      ansible.builtin.file:
+        path: "/etc/borgmatic"
+        state: directory
+        mode: 600
+
+    - name: Ensure group {{borgmatic.group}} exists
+      become: true
+      ansible.builtin.group:
+        name: "{{borgmatic.group}}"
+        state: present
+
+    - name: create folders "{{luks.mountpoint}}"
+      become: true
+      ansible.builtin.file:
+        path: "{{luks.mountpoint}}"
+        state: directory
+        owner: root
+        group: "{{borgmatic.group}}"
+        mode: 750
+
+
+
+    - name: Ensure borgmatic config in place
+      become: true
+      template:
+        src: ../templates/borgmatic_config.j2
+        dest: "/etc/borgmatic/config.yaml"
+        backup: true
+        mode: 0640
+
+    - name: Initialize an empty borg repository
+      become: true      
+      command: "borgmatic init --encryption repokey"
+
+    - name: schedule borgmatic every night
+      become: true      
+      ansible.builtin.cron:
+        name: "check dirs"
+        minute: "00"
+        hour: "4"
+        job: "/usr/local/bin/borgmatic"
+        cron_file: ansible_borgmatic
+        user: root
+        
+    - name: provide borg password file
+      become: true
+      template:
+        src: ../templates/borg_password.j2
+        dest: "/etc/.borg_password.key"
+        backup: true
+        mode: 0400

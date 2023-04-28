@@ -1,2 +1,2 @@
 #!/bin/bash
-docker exec  bookstack_db mysqldump --opt --default-character-set=utf8mb4  -u {{vbookstack_db_user}}  --password='{{vbookstack_db_password}}' {{vbookstack_db_app}} > /home/{{vbookstack}}/backup/backup.sql 2>&1
+docker exec  bookstack_db mysqldump --opt --default-character-set=utf8mb4  -u {{app_bookstack.database_user}}  --password='{{app_bookstack.database_password}}' {{app_bookstack.database}} > /home/{{usernames.bookstack}}/backup/backup.sql 2>&1

@@ -1,14 +1,24 @@
 location:
     source_directories:
-        {% for app in using %}
-        - {{app.backupdir}}
+        {% if app_nextcloud.using  %}
+        -    {{app_nextcloud.backupdir}}
+        {% endif %}
+
+        {% if app_bookstack.using  %}
+        -    {{app_bookstack.backupdir}}
+        -    {{app_bookstack.backupdb}}
+        {% endif %}
+        
+        {% for app in borgmatic.additional_backup_dirs %}
+        - {{app}}
         {% endfor %}
 
     repositories:
-       - {{vborgmatic_backup_target}}{{vborgmatic_repo}}
+       - {{borgmatic.repo_one}}
+       - {{borgmatic.repo_two}}
 
 storage:
-    encryption_passphrase: "{{vborgmatic_pw}}"
+    encryption_passphrase: "{{borgmatic.passphrase}}"
 
 retention:
     keep_daily: 7
@@ -19,4 +29,6 @@ retention:
 consistency:
     checks:
         - repository
+          frequency: 2 weeks
         - archives
+          frequency: 1 month
