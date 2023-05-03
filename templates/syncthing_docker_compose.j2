@@ -1,0 +1,30 @@
+---
+version: "3"
+services:
+  syncthing:
+    image: syncthing/syncthing
+    container_name: syncthing
+    hostname: my-syncthing
+    networks:
+      -      net_nginx_proxy
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - "/home/{{usernames.syncthing}}/data:/var/syncthing"
+
+    ports:
+      - 8384:8384 # Web UI
+      - 22000:22000/tcp # TCP file transfers
+      - 22000:22000/udp # QUIC file transfers
+      - 21027:21027/udp # Receive local discovery broadcasts
+    restart: unless-stopped
+    environment:
+  #    - VIRTUAL_HOST={{app_syncthing.host}}
+  #    - LETSENCRYPT_HOST={{app_syncthing.host}}
+  #    - LETSENCRYPT_EMAIL={{app_nginx.letsencrypt_email}}
+      - VIRTUAL_PORT=8384
+      - VIRTUAL_PROTO=https
+networks:
+  net_nginx_proxy:
+    external: true

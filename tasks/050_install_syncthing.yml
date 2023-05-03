@@ -1,0 +1,37 @@
+
+- name: Add the user syncthing
+  become: true  
+  ansible.builtin.user:
+    name: "{{usernames.syncthing}}"
+    comment: syncthing docker user
+    uid: 1045
+    group: docker
+
+
+- name: Create a new data set "syncthing"
+  become: true
+  community.general.zfs:
+    name: "{{zfs.pool_name}}/syncthing"
+    state: present
+    extra_zfs_properties:
+      setuid: off
+      mountpoint: /home/{{usernames.syncthing}}/data
+
+
+- name: Ensure docker compose config in place
+  become: true
+  become_user:  "{{usernames.syncthing}}"
+  template:
+    src: ../templates/syncthing_docker_compose.j2
+    dest: "{{ app_syncthing.docker_compose_target }}"
+    backup: true
+    mode: 0640
+
+
+- name: deploy Docker Compose stack
+  become: true
+  become_user:  "{{usernames.syncthing}}"
+  community.docker.docker_compose:
+    project_src: "/home/{{usernames.syncthing}}"
+    files:
+     - docker-compose.yml 

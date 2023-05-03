@@ -1,0 +1,9 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars/vars.yml
+
+
+  tasks:
+  - name: Setup syncthing
+    ansible.builtin.include_tasks:
+      file: ../tasks/050_install_syncthing.yml

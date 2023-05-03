@@ -3,6 +3,8 @@
 - [ ] Write this document
     - powersaving
 - [X] switch to yml variables
-- [ ] write hdd logs
+- [X] write hdd logs
 - [ ] move secrets to /vault
 - [ ] setup wikijs
+
+- syncthing: run only locally <ip:8384>

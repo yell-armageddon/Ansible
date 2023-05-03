@@ -43,14 +43,25 @@
   - name: Install Bookstack docker
     ansible.builtin.include_tasks:
       file: ../tasks/030_install_bookstack.yml
+    when: "{{app_bookstack.using}}"
 
   - name: Install Nextcloud docker
     ansible.builtin.include_tasks:
       file: ../tasks/040_install_nextcloud.yml
+    when: "{{app_nextcloud.using}}"
+
+  - name: Setup Email
+    ansible.builtin.include_tasks:
+      file: ../tasks/050_setup_email.yml
 
   - name: Enable Borgmatic
     ansible.builtin.include_tasks:
       file: ../tasks/100_enable_borgmatic.yml
+    when: "{{borgmatic.using}}"
+
+  - name: Setup hdd S.M.A.R.T reports
+    ansible.builtin.include_tasks:
+      file: ../tasks/120_hdd_logging.yml  
 
   - name: Install and enable samba
     ansible.builtin.include_tasks:

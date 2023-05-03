@@ -8,10 +8,16 @@ location:
         -    {{app_bookstack.backupdir}}
         -    {{app_bookstack.backupdb}}
         {% endif %}
-        
+
+        {% if app_syncthing.using %}
+        - "/home/{{usernames.syncthing}}/data"
+        {% endif %}
+
         {% for app in borgmatic.additional_backup_dirs %}
         - {{app}}
         {% endfor %}
+
+
 
     repositories:
        - {{borgmatic.repo_one}}

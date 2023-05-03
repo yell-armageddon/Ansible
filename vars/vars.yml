@@ -41,6 +41,7 @@ luks:
 # Backups
 ## backups are relying on daily borgmatic runs to the ZFS and LUKS devices.
 borgmatic:
+  using: true
   repo_one: /media/backup/repo
   repo_two: /backup/repo
   passhprase: secret1
@@ -68,6 +69,7 @@ usernames:
   nginx: nginx
   nextcloud: nextcloud
   bookstack: bookstack
+  syncthing: syncthing
 
 app_nginx:
   user: nginx
@@ -96,3 +98,8 @@ app_bookstack:
   database_root_password: "WFAASR£tfeadsc?)as3"
   backupdir: /home/{{usernames.bookstack}}/config/www
   backupdb: /home/{{usernames.bookstack}}/backup
+
+app_syncthing:
+  using: true
+  host: syncthing.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.syncthing}}/docker-compose.yml
