@@ -1,9 +1,11 @@
 # control node describes the local machine where ansible is run.
 control_node_user: myLinuxUser
 control_node:
-  repo_backup_path: '/home/{{ local_user }}/AnsibleBackup'
-  zfs_key_location: '/home/{{ local_user }}/AnsibleSecrets/zfs_key'
-  luks_key_location: '/home/{{ local_user }}/AnsibleSecrets/luks_key'
+  # where to sent warning/log emails to
+  email: a@b.c
+  repo_backup_path: '/home/{{ control_node_user }}/AnsibleBackup'
+  zfs_key_location: '/home/{{ control_node_user }}/AnsibleSecrets/zfs_key'
+  luks_key_location: '/home/{{ control_node_user }}/AnsibleSecrets/luks_key'
 
 hdd_logs: /root
 # DNS entries
@@ -47,6 +49,15 @@ borgmatic:
 ## specify additional paths to add to the repo. list cannot be empty.
   additional_backup_dirs:
     - /root
+
+# Email credentials
+## these are used to sent important warnings
+## create a new, seperate email for this.
+email:
+  address: aaa@outlook.com
+  password: asdasd
+  server: smtp.office365.com
+  port: 587
 
 # Docker container
 ## list of variables relevant for each docker container

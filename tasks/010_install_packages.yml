@@ -26,6 +26,9 @@
           - smartmontools
           - rsync
           - hdparm
+          - postfix
+          - mailutils
+          - python-is-python3
         state: latest
         update_cache: true
 

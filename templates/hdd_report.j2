@@ -2,5 +2,5 @@
 
 /etc/hdd_smart.sh /dev/disk/by-id/{{luks.device_id}}
 {% for item in zfs.pool_devices %}
-/etc/hdd_smart.sh {{item}}
+bash /etc/hdd_smart.sh {{item}}
 {% endfor %}

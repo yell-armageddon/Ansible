@@ -1,0 +1,22 @@
+
+  - name: Ensure /etc/postfix/main.cf is in place
+    become: true
+    template:
+      src: ../templates/postfix_main_cf.j2
+      dest: /etc/postfix/main.cf
+      backup: true
+      mode: 0640
+
+  - name: Ensure /etc/postfix/sasl_passwd is in place
+    become: true
+    template:
+      src: ../templates/postfix_sasl_passwd.j2
+      dest: /etc/postfix/sasl_passwd
+      backup: true
+      mode: 0640
+
+  - name: Create password hash file /etc/postfix/sasl_passwd.db
+    become: true
+    ansible.builtin.shell:
+      cmd: postmap /etc/postfix/sasl_passwd
+    

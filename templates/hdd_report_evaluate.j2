@@ -1,0 +1,33 @@
+import pandas as pd
+import os
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
+devices = [ "/dev/disk/by-id/{{luks.device_id}}"]
+{% for item in zfs.pool_devices %}
+devices.append("{{item}}")
+{% endfor %}
+
+for device in devices:
+    filename = "{{hdd_logs}}/logs_"+ device.rsplit('/', 1)[1]+".txt"
+
+    with open('/etc/hostname', 'r') as file:
+        hostname = file.read().replace('\n', '')
+
+    # read log file
+    df = pd.read_csv(filename, sep=";")
+    # get last 8 days
+    dft = df.tail(8)
+
+    # compute the row-wise difference
+    x=dft[['Reallocated_Sector_Ct', 'Reported_Uncorrect',
+        'Command_Timeout', 'Current_Pending_Sector', 'Offline_Uncorrectable']]
+    dfdiff = x.diff(periods=1,axis=0).max()
+
+    subject = hostname + " {{inventory_hostname}} encountered error"
+    sentMail = False
+    for a in x.columns:
+        if (dfdiff[a]) > 0:
+            sentMail = True
+            body = "WARNING S.M.A.R.T: The following smart stats for device "+device+" increased \n" + str(x.dft())
+    if sentMail:
+        os.system('echo "'+body+'" | mail -s "'+subject+'" {{control_node.email}} -a FROM:{{email.address}}')
