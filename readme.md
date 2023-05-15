@@ -1,7 +1,10 @@
 # Ansible Server
 ## Idea
 Setup a custom server to provide a private-cloud and backup solution in a reproducible and almost automated way.
-It is hard to keep track of the configuration of a custom server. By using ansible, every change is documented and reproducible.
+
+It is hard to keep track of the configuration of a custom server. [Ansible](https://www.ansible.com/overview/how-ansible-works) allows to reproduce every change done.
+This is a collection of Ansible playbooks. By copying these playbooks a similar setup can be installed in a short amount of time.
+
 
 ## Comparable projects
 - https://yunohost.org/#/
