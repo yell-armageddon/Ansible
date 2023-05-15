@@ -70,6 +70,7 @@ usernames:
   nextcloud: nextcloud
   bookstack: bookstack
   syncthing: syncthing
+  pihole: pihole
 
 app_nginx:
   user: nginx
@@ -103,3 +104,13 @@ app_syncthing:
   using: true
   host: syncthing.{{dns.host}}
   docker_compose_target:  /home/{{usernames.syncthing}}/docker-compose.yml
+
+app_pihole:
+  using: true
+  host: pihole.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.pihole}}/docker-compose.yml
+  password: "secret12re"
+  dns_server_1: 8.8.8.8 # dns server need to be set manually
+  dns_server_2: 8.8.4.4
+  # also need to add blocklist manually 
+  # https://github.com/RPiList/specials/blob/54876178ffa7e4d1224ac81b00bedd0040f65802/Blocklisten.md

@@ -1,0 +1,58 @@
+
+- name: Add the user pihole
+  become: true  
+  ansible.builtin.user:
+    name: "{{usernames.pihole}}"
+    comment: pihole docker user
+    uid: 1046
+    group: docker
+
+- name: systemd-resolved workaround for ubuntu to open port 53
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/resolved.conf
+    search_string: DNSStubListener=
+    line: DNSStubListener=no
+
+- name: Restart service systemd-resolved, in all cases
+  become: true
+  ansible.builtin.service:
+    name: systemd-resolved
+    state: restarted
+
+
+- name: Ensure docker compose config in place
+  become: true
+  become_user: "{{usernames.pihole}}"
+  template:
+    src: ../templates/pihole_docker_compose.j2
+    dest: "{{app_pihole.docker_compose_target}}"
+    backup: true
+    mode: 0644
+
+- name: Create etc pihole folder
+  become: true
+  ansible.builtin.file:
+    path: "/home/{{usernames.pihole}}/etc-pihole"
+    state: directory
+    owner: "{{usernames.pihole}}"  
+    group : docker 
+
+- name: copy custom dns resolution
+  become: true
+
+  template:
+    src: ../templates/pihole_custom_dns.j2
+    dest: "/home/{{usernames.pihole}}/etc-pihole/custom.list"
+    backup: true
+    mode: 0644  
+    owner: "{{usernames.pihole}}"   
+    group : docker 
+
+- name: deploy Docker Compose stack
+  become: true
+  become_user: "{{usernames.pihole}}"
+  community.docker.docker_compose:
+    project_src: /home/{{usernames.pihole}}
+    files:
+    - docker-compose.yml 

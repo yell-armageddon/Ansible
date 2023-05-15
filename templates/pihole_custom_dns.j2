@@ -1,0 +1,10 @@
+{% if app_nextcloud.using  %}
+{{ansible_default_ipv4.address}} {{app_nextcloud.host}}
+{% endif %}
+{% if app_bookstack.using  %}
+{{ansible_default_ipv4.address}} {{app_bookstack.host}}
+{% endif %}
+{% if app_syncthing.using %}
+{{ansible_default_ipv4.address}} {{app_syncthing.host}}
+{% endif %}
+{{ansible_default_ipv4.address}} {{app_pihole.host}}

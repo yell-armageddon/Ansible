@@ -1,0 +1,9 @@
+- hosts: myvhosts
+  vars_files:
+    - ../vars/vars.yml
+
+
+  tasks:
+  - name: Install pihole
+    ansible.builtin.include_tasks:
+      file: ../tasks/025_install_pihole.yml

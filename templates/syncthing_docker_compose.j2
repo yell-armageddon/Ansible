@@ -25,6 +25,7 @@ services:
   #    - LETSENCRYPT_EMAIL={{app_nginx.letsencrypt_email}}
       - VIRTUAL_PORT=8384
       - VIRTUAL_PROTO=https
+      - NETWORK_ACCESS=internal
 networks:
   net_nginx_proxy:
     external: true
