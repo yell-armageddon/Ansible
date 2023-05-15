@@ -19,7 +19,7 @@ This is a collection of Ansible playbooks. By copying these playbooks a similar 
 
 ## configured services
 Ubuntu server is used as the base linux installation.
-Apart from borgmatic (the backup solution), all services are ran as docker container.
+Apart from borgmatic (the backup solution), all services are ran as docker container and can be disabled if not required.
 - nginx (reverse proxy)
 - Nextcloud (data synchronisation)
 - Syncthing (data synchronisation for android devices)
@@ -28,7 +28,7 @@ Apart from borgmatic (the backup solution), all services are ran as docker conta
 - borgmatic (automated backup)
 
 ## disk setup and backups
-The scripts assume a four disk setup.
+The scripts assumes a four disk setup.
 - 64GB SSD to install the operating system
 - two mirrored zfs devices as data storage (zfs1, zfs2). Size 3 times the size of the data to be stored
 - a single device to store a copy of the backups (luks1). Half the size of the zfs devices/1.5 times the size of the data to be stored.
@@ -57,7 +57,7 @@ graph TD;
 ```
 [Bormatic](https://torsion.org/borgmatic/) is used to create versioned archive of the data. Daily database dumps of the docker containers are also part of the backup.
 
-The default backup will create an archived backup on the zfs devices - the same device where the data originally resides. (Storing on the same disk does not help against hardware errors but against accidental file deletion.)
+By default we create an archived backup on the zfs devices - the same device where the data originally resides. (Storing on the same disk does not help against hardware errors but against accidental file deletion.)
 A second archive is created on the luks1 device.
 
 
@@ -69,7 +69,7 @@ The encryption keys and secrets used during creation should be stored separately
 - luks1 disk fails: replace the disk and either copy the borg archive from zfs or create a new borg archive.
 - the server goes up in flames or malware encrypts the whole file system: This is why one should keep a separate disk at an external location. Swap out the luks or zfs disk in regular intervals.
 
-To detect disk failures, the observe [the relevant SMART values](https://www.backblaze.com/blog/what-smart-stats-indicate-hard-drive-failures/).
+To detect disk failures, observe [the relevant SMART values](https://www.backblaze.com/blog/what-smart-stats-indicate-hard-drive-failures/).
 These are checked and logged daily. An email is sent out if one of the values has changed.
 
 
@@ -93,7 +93,7 @@ Huge thread on power consumption on [tweakers forum (Belgian)](https://gathering
 ## External exposure and pihole
 To get letsencrypt certificates, portforwarding needs to be enabled. Afterwards, this can be disabled so that no data is exposed to the internet. 
 To still access the docker container, for example nextcloud, one would need to write manual DNS entries on every machine -or- use a custom DNS server.
-For example, Pihole is configured to resolve the docker URLS locally.
+As a local DNS, Pihole is configured to resolve the docker URLS.
 
 By default, pihole and syncthing are only available locally. (Add `NETWORK_ACCESS=INTERNAL` to the environment variables in the corresponding docker compose file.)
 
