@@ -1,9 +1,9 @@
     - name: copy key
       become: true
       ansible.posix.authorized_key:
-        user: "{{control_node_user}}"
+        user: "{{ansible_user}}"
         state: present
-        key: "{{ansible_ssh_private_key_file_lookup}}"
+        key: "{{ansible_ssh_public_key_file}}"
   
     - name: disable Password Authentication
       become: true
