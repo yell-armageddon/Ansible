@@ -107,6 +107,7 @@ It is recommended to enable 2FA at least for the admin Nextcloud account.
 - [X] write hdd logs
 - [ ] move secrets to /vault
 - [ ] setup wikijs
+- [ ] more sophistcated samba
 
 - syncthing: run only locally <ip:8384>
 - adjust hosts file if no outside exposure desired
