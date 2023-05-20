@@ -1,3 +1,10 @@
+#!/bin/bash
+
+REPO_PATH_1="{{borgmatic.repo_one}}"
+REPO_PATH_2="{{borgmatic.repo_two}}"
+ARCHIVE_PREFIX="$(hostname)-"
+EMAIL_ADDRESS="$1"
+
 get_most_recent_backup_size() {
     local repo_path=$1
     local archives=$(borg list --short --sort-by='timestamp' "$repo_path")
@@ -6,5 +13,43 @@ get_most_recent_backup_size() {
     local archive_size=$(borg info --json "$repo_path::$archive_name" | jq -r '.cache.stats.unique_size')
     local formatted_size=$(numfmt --to=iec --suffix=B --padding=7 "$archive_size")
     size_gb=$(awk "BEGIN {printf \"%.2f\", $archive_size / (1024^3)}")
-    echo "$repo_path;$archive_name;$formatted_size;$size_gb"
+    echo "size $formatted_size for path $repo_path::$archive_name"
 }
+
+
+# Get today's date
+#today=$(date +"%Y-%m-%d" -d "yesterday")
+today=$(date +"%Y-%m-%d" )
+
+# Construct the archive names for today and yesterday
+archive_name_today="${ARCHIVE_PREFIX}${today}"
+
+# Check if the archives exist in the repository paths
+archive_broken=0
+
+if borg list "$REPO_PATH_1" 2>/dev/null | grep -q "$archive_name_today"; then
+  # Retrieve and display information for both repositories
+  info1=$(get_most_recent_backup_size "$REPO_PATH_1")
+  echo "OK: ${today} Backup was successful $info1"
+else
+  archive_broken=1
+  message1="ERROR: ${today} backup for ${REPO_PATH_1} was unsuccessful."
+  echo "$message1"
+fi
+
+if borg list "$REPO_PATH_2" 2>/dev/null | grep -q "$archive_name_today"; then
+  info2=$(get_most_recent_backup_size "$REPO_PATH_2")
+  echo "OK: ${today} Backup was successful $info2"
+else
+  archive_broken=1
+  message2="ERROR: ${today} backup for ${REPO_PATH_2} was unsuccessful."
+  echo "$message2"
+fi
+
+
+
+if [ "$archive_broken" -eq 1 ]; then
+  if [ -n "$EMAIL_ADDRESS" ]; then
+    echo -e "$message1\n$message2" | mail -s "ERROR $(hostname) Borg Backup" "$EMAIL_ADDRESS" -a FROM:{{email.address}}
+  fi
+fi

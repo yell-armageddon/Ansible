@@ -110,3 +110,8 @@ For enhanced security, it is advised to enable two-factor authentication (2FA) f
 - adjust hosts file if no outside exposure desired
     - still works with expired certs?
 
+## TODOS
+- write borg log path into /etc/environments
+- copy check borg
+- schedule check borg
+- above only when borgmatic is enabled
