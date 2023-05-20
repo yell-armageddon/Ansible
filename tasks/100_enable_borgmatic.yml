@@ -51,3 +51,29 @@
         dest: "/etc/.borg_password.key"
         backup: true
         mode: 0400
+
+    - name: Placing a custom borg log path in /etc/environment
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        search_string: 'ANS_BORG_LOG'
+        line: 'ANS_BORG_LOG="{{borgmatic.custom_log_file}}"'
+
+    - name: copy script to check the recent borg backups
+      become: true
+      template:
+        src: ../templates/scripts/check_borg_run.j2
+        dest: "{{script_location}}/ans_check_borg_run.sh"
+        backup: true
+        mode: 0540
+
+    - name: schedule daily check of borg backup
+      become: true      
+      ansible.builtin.cron:
+        name: "check dirs"
+        minute: "55"
+        hour: "08"
+        job: 
+          "{{script_location}}/ans_check_borg_run.sh {{control_node.email}} >> $ANS_BORG_LOG"
+        cron_file: ansible_check_borg_run
+        user: root
