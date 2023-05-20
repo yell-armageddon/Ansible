@@ -1,0 +1,30 @@
+#!/bin/bash
+
+REPO_PATH_1="{{borgmatic.repo_one}}"
+REPO_PATH_2="{{borgmatic.repo_two}}"
+
+get_most_recent_backup_size() {
+    local repo_path=$1
+    local archives=$(borg list --short --sort-by='timestamp' "$repo_path")
+    local most_recent_archive=$(echo "$archives" | tail -n 1)
+    local archive_name=$(echo "$most_recent_archive" | awk '{ print $1 }')
+    local archive_size=$(borg info --json "$repo_path::$archive_name" | jq -r '.cache.stats.unique_size')
+    local formatted_size=$(numfmt --to=iec --suffix=B --padding=7 "$archive_size")
+    size_gb=$(awk "BEGIN {printf \"%.2f\", $archive_size / (1024^3)}")
+    echo "$repo_path;$archive_name;$formatted_size;$size_gb"
+}
+
+# Retrieve and display information for both repositories
+info1=$(get_most_recent_backup_size "$REPO_PATH_1")
+info2=$(get_most_recent_backup_size "$REPO_PATH_2")
+
+header="repo_path_one;archive_one;size_one;size_one_gb;repo_path_two;archive_two;size_two;size_two_gb;"
+
+if [[ -f "{{hdd_logs}}/logs_borg_archives.txt" ]]; then
+header=""
+else
+echo $header >> {{hdd_logs}}/logs_borg_archives.txt
+fi
+
+
+echo "$info1;$info2" >> {{hdd_logs}}/logs_borg_archives.txt

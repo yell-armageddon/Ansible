@@ -7,7 +7,6 @@ smart188=`smartctl $1 -a  | grep Command_Timeout | awk '{print $NF}'`
 smart197=`smartctl $1 -a  | grep Current_Pending_Sector | awk '{print $NF}'`
 smart198=`smartctl $1  -a  | grep Offline_Uncorrectable | awk '{print $NF}'`
 
-
 d=$(date +%Y-%m-%d)
 
 device=`echo $1  | awk -F "[./]+" '/\//{print $NF}'`
@@ -18,5 +17,4 @@ else
 echo $header >> {{hdd_logs}}/logs_$device.txt
 fi
 
-
-echo "$d;$1;$smart5;$smart187;$smart188;$smart197;$smart198" >> {{hdd_logs}}/logs_$device.txt
+echo "$d;$1;$smart5;$smart187;$smart188;$smart197;$smart198"  >> {{hdd_logs}}/logs_$device.txt

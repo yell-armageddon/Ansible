@@ -1,0 +1,46 @@
+import pandas as pd
+import os
+pd.set_option('display.max_columns', 500)
+from datetime import date
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+
+today = date.today()
+
+
+devices = [ "/dev/disk/by-id/{{luks.device_id}}"]
+{% for item in zfs.pool_devices %}
+devices.append("{{item}}")
+{% endfor %}
+
+subject = "Disk report "+str(today)
+report ="<h1>"+subject+"</h1>"
+report = report + "<h2>S.M.A.R.T. long test results</h2>"
+
+for dev in devices:
+    report=report+os.popen("bash {{script_location}}/ans_get_smart_test_result.sh "+dev).read() +"<br>"
+
+report = report + "<h2>ZPool scrub:</h2>"
+report = report + os.popen("zpool status -v {{zfs.pool_name}} | grep scan").read()
+
+
+### Send Email Part
+sender = "{{email.address}}"
+recipient = "{{control_node.email}}"
+
+
+# Create a MIME multipart message
+message = MIMEMultipart('alternative')
+message['From'] = sender
+message['To'] = recipient
+message['Subject'] = subject
+
+html_part = MIMEText(report, 'html')
+message.attach(html_part)
+
+# Send the email using sendmail
+with smtplib.SMTP('localhost') as smtp:
+    smtp.sendmail(sender, recipient, message.as_string())
+

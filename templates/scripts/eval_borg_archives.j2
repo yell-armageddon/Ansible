@@ -1,0 +1,39 @@
+import pandas as pd
+import os
+pd.set_option('display.max_columns', 500)
+
+with open('/etc/hostname', 'r') as file:
+    hostname = file.read().replace('\n', '')
+
+filename = "{{hdd_logs}}/logs_borg_archives.txt"
+
+# read log file
+df = pd.read_csv(filename, sep=";")
+
+# get last 8 days
+dft = df.tail(8).copy()
+dft['Quotient_one'] = dft['size_one_gb'].div(dft['size_one_gb'].shift())
+dft['Quotient_two'] = dft['size_two_gb'].div(dft['size_two_gb'].shift())
+
+# compute the row-wise difference
+x=dft[["Quotient_one","Quotient_two"]]
+xmax= x.max()
+xmin = x.min()
+
+subject = hostname + " {{inventory_hostname}} Borg Archive error"
+sentMail = False
+reason= ""
+
+for a in xmax:
+    if (a) > 1.1:
+        sentMail = True
+        reason = "At least 10% additional data was included in the backup."
+for a in xmin:
+    if (a) > 0.9:
+        sentMail = True
+        reason = "At least 10% less data was included in the backup."
+
+
+body = str(dft)
+if sentMail:
+    os.system('echo "'+body+'" | mail -s "'+subject+'" {{control_node.email}} -a FROM:{{email.address}}')

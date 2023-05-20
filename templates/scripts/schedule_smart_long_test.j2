@@ -1,0 +1,6 @@
+#!/bin/bash
+smartctl -t long "/dev/disk/by-id/{{luks.device_id}}"
+{% for item in zfs.pool_devices %}
+smartctl -t long "{{item}}" 
+{% endfor %}
+zfs scrub "{{zfs.pool_name}}"

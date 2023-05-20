@@ -1,0 +1,10 @@
+get_most_recent_backup_size() {
+    local repo_path=$1
+    local archives=$(borg list --short --sort-by='timestamp' "$repo_path")
+    local most_recent_archive=$(echo "$archives" | tail -n 1)
+    local archive_name=$(echo "$most_recent_archive" | awk '{ print $1 }')
+    local archive_size=$(borg info --json "$repo_path::$archive_name" | jq -r '.cache.stats.unique_size')
+    local formatted_size=$(numfmt --to=iec --suffix=B --padding=7 "$archive_size")
+    size_gb=$(awk "BEGIN {printf \"%.2f\", $archive_size / (1024^3)}")
+    echo "$repo_path;$archive_name;$formatted_size;$size_gb"
+}

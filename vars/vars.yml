@@ -8,11 +8,14 @@ control_node:
   luks_key_location: '/home/{{ control_node_user }}/AnsibleSecrets/luks_key'
 
 hdd_logs: /root
+script_location: /usr/local/sbin
+
 # DNS entries
 dns:
   host: goip.it
   user: IfjdsaKTET
   password: dfERFXCC93reX
+
 
 #host:
 #  nextcloud: nextcloud.{{dns.host}}

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+result=$(sudo smartctl -l selftest $1 | awk '/# 1/  {  print; exit; }')
+result_hours=$(echo $result|  awk '{print $(NF-1)}')
+power_on_hours=$(sudo smartctl -a $1 | awk '/Power_On_Hours/ { print $10 }')
+diff=$((power_on_hours-result_hours))
+
+echo "Results for $1:"
+#echo "the power on hours are: $power_on_hours"
+echo "Last SMART test is $diff hours ago and the result are: $result"

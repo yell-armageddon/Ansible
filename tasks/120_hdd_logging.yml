@@ -1,28 +1,54 @@
 
-  - name: smart value extraction script is in place
+  - name: copy script that logs smart values
     become: true
     template:
-      src: ../templates/hdd_smart_values.j2
-      dest: "/etc/hdd_smart.sh"
+      src: ../templates/scripts/log_smart_values.j2
+      dest: "{{script_location}}/ans_log_smart_values.sh"
       backup: true
-      mode: 0640
+      mode: 0540
 
-  - name: smart value extraction script is in place
+
+  - name: create script that returns last smart test
     become: true
     template:
-      src: ../templates/hdd_report.j2
-      dest: "/etc/hdd_smart_report.sh"
+      src: ../templates/scripts/get_smart_test_result.j2
+      dest: "{{script_location}}/ans_get_smart_test_result.sh"
       backup: true
-      mode: 0640
+      mode: 0540
 
-  - name: schedule daily log of smart values
+  - name: copy script to evaluate smart values
+    become: true
+    template:
+      src: ../templates/scripts/hdd_report_evaluate.j2
+      dest: "{{script_location}}/ans_hdd_report_evaluate.py"
+      backup: true
+      mode: 0540
+
+  - name: Install pandas python package
+    become: true
+    ansible.builtin.pip:
+      name: pandas
+
+  - name: schedule daily evaluation of SMART logs
     become: true      
     ansible.builtin.cron:
       name: "check dirs"
-      minute: "45"
+      minute: "55"
       hour: "23"
       job: 
-        bash /etc/hdd_smart_report.sh
-      cron_file: ansible_hdd_smart_values
+        python "{{script_location}}/ans_hdd_report_evaluate.py"
+      cron_file: ansible_hdd_evaluate_smart_values
       user: root
 
+
+
+  - name: schedule weekly smart LONG test 
+    become: true      
+    ansible.builtin.cron:
+      name: "check dirs"
+      minute: "55"
+      hour: "23"
+      job: 
+        smartctl -t long "/dev/disk/by-id/{{luks.device_id}}" && {% for item in zfs.pool_devices %}smartctl -t long "/dev/disk/by-id/{{item}}" {% if not ansible_loop.last %}&&{%endif%} {% endfor %}
+      cron_file: ansible_weekly_smart_test
+      user: root

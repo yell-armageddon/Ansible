@@ -1,11 +1,16 @@
 import pandas as pd
 import os
 pd.set_option('display.max_columns', 500)
-pd.set_option('display.width', 1000)
+
 devices = [ "/dev/disk/by-id/{{luks.device_id}}"]
 {% for item in zfs.pool_devices %}
 devices.append("{{item}}")
 {% endfor %}
+
+{% for item in devices %}
+os.system("bash {{script_location}}/ans_log_smart_values.sh {{item}}")
+{% endfor %}
+
 
 for device in devices:
     filename = "{{hdd_logs}}/logs_"+ device.rsplit('/', 1)[1]+".txt"
@@ -28,6 +33,6 @@ for device in devices:
     for a in x.columns:
         if (dfdiff[a]) > 0:
             sentMail = True
-            body = "WARNING S.M.A.R.T: The following smart stats for device "+device+" increased \n" + str(x.dft())
+            body = "WARNING S.M.A.R.T: The following smart stats for device "+device+" increased \n" + str(dft)
     if sentMail:
         os.system('echo "'+body+'" | mail -s "'+subject+'" {{control_node.email}} -a FROM:{{email.address}}')

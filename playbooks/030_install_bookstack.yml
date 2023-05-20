@@ -1,6 +1,6 @@
 - hosts: myvhosts
   vars_files:
-    - ../vars/vars.yml
+    - "{{ansible_vault}}/vars.yml"
   tasks:
   - name: Include task list in play
     ansible.builtin.include_tasks:
