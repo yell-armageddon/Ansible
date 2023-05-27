@@ -4,6 +4,7 @@ REPO_PATH_1="{{borgmatic.repo_one}}"
 REPO_PATH_2="{{borgmatic.repo_two}}"
 ARCHIVE_PREFIX="$(hostname)-"
 EMAIL_ADDRESS="$1"
+export BORG_PASSCOMMAND="cat {{borgmatic.password_file}}"
 
 get_most_recent_backup_size() {
     local repo_path=$1

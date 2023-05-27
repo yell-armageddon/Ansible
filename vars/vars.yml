@@ -48,6 +48,7 @@ borgmatic:
   repo_one: /media/backup/repo
   repo_two: /backup/repo
   passhprase: secret1
+  password_file: /etc/borgmatic/pw
   group: mybackup
   user: mybackupuser
 ## specify additional paths to add to the repo. list cannot be empty.

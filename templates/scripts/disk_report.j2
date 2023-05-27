@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import subprocess
 pd.set_option('display.max_columns', 500)
 from datetime import date
 import smtplib
@@ -25,6 +26,23 @@ for dev in devices:
 report = report + "<h2>ZPool scrub:</h2>"
 report = report + os.popen("zpool status -v {{zfs.pool_name}} | grep scan").read()
 
+report = report + "<h2>Available disk space:</h2>"
+bash_command = 'df -h | head -1 && df -h | grep {{zfs.pool_name}}  && df -h | grep " {{luks.mountpoint}}"'
+process=subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, universal_newlines=True)
+output=""
+for line in process.stdout:
+    output += line+"<br>"
+process.wait()
+report = report + output
+
+
+report = report + "<h2>Last 8 days of Backups:</h2>"
+process=subprocess.Popen("tail -16 $ANS_BORG_LOG ", shell=True, stdout=subprocess.PIPE, universal_newlines=True)
+output=""
+for line in process.stdout:
+    output += line +"<br>"
+process.wait()
+report = report + output
 
 ### Send Email Part
 sender = "{{email.address}}"

@@ -41,6 +41,13 @@
       user: root
 
 
+  - name: copy script to trigger SMART long tests to "{{script_location}}/ans_smart_long_test.sh"
+    become: true
+    template:
+      src: ../templates/scripts/schedule_smart_long_test.j2
+      dest: "{{script_location}}/ans_smart_long_test.sh"
+      backup: true
+      mode: 0540
 
   - name: schedule weekly smart LONG test 
     become: true      
@@ -48,7 +55,28 @@
       name: "check dirs"
       minute: "55"
       hour: "23"
+      weekday: 6 # saturday
       job: 
-        smartctl -t long "/dev/disk/by-id/{{luks.device_id}}" && {% for item in zfs.pool_devices %}smartctl -t long "/dev/disk/by-id/{{item}}" {% if not ansible_loop.last %}&&{%endif%} {% endfor %}
+        "{{script_location}}/ans_smart_long_test.sh"
+      cron_file: ansible_weekly_smart_test
+      user: root
+
+  - name: copy script to mail disk report
+    become: true
+    template:
+      src: ../templates/scripts/disk_report.j2
+      dest: "{{script_location}}/ans_disk_report.py"
+      backup: true
+      mode: 0540
+
+  - name: schedule weekly disk report
+    become: true      
+    ansible.builtin.cron:
+      name: "check dirs"
+      minute: "55"
+      hour: "17"
+      weekday: 0 # sunday
+      job: 
+        "{{script_location}}/ans_smart_long_test.sh"
       cron_file: ansible_weekly_smart_test
       user: root

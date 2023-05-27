@@ -48,7 +48,7 @@
       become: true
       template:
         src: ../templates/borg_password.j2
-        dest: "/etc/.borg_password.key"
+        dest: "{{borgmatic.password_file}}"
         backup: true
         mode: 0400
 
@@ -71,8 +71,8 @@
       become: true      
       ansible.builtin.cron:
         name: "check dirs"
-        minute: "55"
-        hour: "08"
+        minute: "45"
+        hour: "06"
         job: 
           "{{script_location}}/ans_check_borg_run.sh {{control_node.email}} >> $ANS_BORG_LOG"
         cron_file: ansible_check_borg_run

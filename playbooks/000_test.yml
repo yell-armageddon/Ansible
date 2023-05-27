@@ -1,6 +1,6 @@
 - hosts: myvhosts
   vars_files:
-    - ../vars/vars.yml
+    - "{{ansible_vault}}/vars.yml"
 #    - ../vars/samba.yml
  #   - ../vars/vars.yml
 
@@ -8,22 +8,12 @@
   tasks:  
   
   - debug: var=app_nginx.docker_compose_target
-  - debug: var=inventory_hostname
-  - debug: var=app_b
-
-  - name: Set Apache URL
-    set_fact:
-      zfs_O_options: ## encryption options
-            - "encryption=on"
-            - "keyformat=raw"
-            - "keylocation=file://{{zfs.key_location}}"
 
 
-  - debug: var=zfs_O_options
-
-
-  - name: Include task list in play
-    ansible.builtin.include_tasks:
-      file:
-        -  ../tasks/001_copysshkey.yml
-        -  ../tasks/010_install_packages.yml
+  - name: copy script to check the recent borg backups
+    become: true
+    template:
+      src: ../templates/scripts/disk_report.j2
+      dest: "{{script_location}}/ans_disk_report.py"
+      backup: true
+      mode: 0540

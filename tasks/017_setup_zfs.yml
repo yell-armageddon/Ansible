@@ -81,6 +81,7 @@
     when: 
     - create_zfs | bool
     - setup_zfs | bool
+    - app_nextcloud.using    | bool
 
 
   - name: Add the user nextcloud
@@ -93,6 +94,7 @@
     when:
       - create_zfs | bool
       - setup_zfs | bool
+      - app_nextcloud.using  | bool  
 
   - name: Set zfs permissions
     become: true  
@@ -105,6 +107,8 @@
     when:
       - create_zfs | bool
       - setup_zfs | bool
+      - app_nextcloud.using     | bool
+
 
 
   - name: Service to auto load zfs key

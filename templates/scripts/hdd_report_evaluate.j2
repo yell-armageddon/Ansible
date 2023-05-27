@@ -7,9 +7,9 @@ devices = [ "/dev/disk/by-id/{{luks.device_id}}"]
 devices.append("{{item}}")
 {% endfor %}
 
-{% for item in devices %}
-os.system("bash {{script_location}}/ans_log_smart_values.sh {{item}}")
-{% endfor %}
+for item in devices:
+    os.system("bash {{script_location}}/ans_log_smart_values.sh "+item)
+
 
 
 for device in devices:
