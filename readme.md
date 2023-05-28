@@ -5,6 +5,7 @@ Setup a custom server to provide a private-cloud and backup solution in a reprod
 Maintaining the configuration of a customized server can be challenging.  [Ansible](https://www.ansible.com/overview/how-ansible-works) allows to replicate every modification done.
 This compilation comprises Ansible playbooks, which enable the swift installation of a similar setup.
 
+![simplified architecture](https://raw.githubusercontent.com/yell-armageddon/Ansible/main/serverArchitecture.png?token=GHSAT0AAAAAACAWSIB2P55HW2XGQVAAIC2KZDTW27Q)
 
 ## Comparable projects
 - https://yunohost.org/#/
@@ -113,3 +114,4 @@ For enhanced security, it is advised to enable two-factor authentication (2FA) f
 
 ## TODOS
 - write borg log path into /etc/environments
+s
