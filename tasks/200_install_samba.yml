@@ -1,8 +1,4 @@
-- hosts: myvhosts
-  vars_files:
-    - ../vars.json
-    - ../vars/samba.yml
-  tasks:  
+ 
     - name: Install samba and dependencies
       become: true  
       apt:
@@ -63,6 +59,7 @@
         owner: root
         group: root
         mode: '0755'
+        recurse: yes
       when: samba_shares|length > 0
       tags: samba
 
@@ -75,6 +72,7 @@
         group: "{{ item.group | default('users') }}"
         mode: "{{ item.directory_mode | default('0775') }}"
         setype: "{{ item.setype | default('samba_share_t') }}"
+        recurse: yes
       with_items: "{{ samba_shares }}"
       tags: samba      
 
