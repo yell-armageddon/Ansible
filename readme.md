@@ -25,7 +25,7 @@ With the exception of borgmatic (the backup solution), all services are containe
 - Syncthing (data synchronization for Android devices)
 - Bookstack (wiki)
 - Pihole (ad blocking, custom DNS)
- - Borgmatic (automated backup)
+- Borgmatic (automated backup)
 
 ## Disk Setup and Backups
 The scripts assume a four-disk setup, as follows:
@@ -97,21 +97,19 @@ As a local DNS solution, Pihole is configured to resolve the Docker URLs. By def
 For enhanced security, it is advised to enable two-factor authentication (2FA) for at least the admin account in Nextcloud.
 
 ## ToDos:
-- [ ] Write this document
 - [ ] detailed installation steps
-- [ ] Could zfs snapshot feature replace borgmatic on zfs?
+- [X] Could zfs snapshot feature replace borgmatic on zfs?
+    Snapshots require a lot of memory
 - [X] switch to yml variables
 - [X] write hdd logs
-- [ ] move secrets to /vault
+- [X] move secrets to /vault
 - [ ] setup wikijs
 - [ ] more sophistcated samba
-
+- [ ] add heimdall
+- [ ] add portainer
 - syncthing: run only locally <ip:8384>
 - adjust hosts file if no outside exposure desired
     - still works with expired certs?
 
 ## TODOS
 - write borg log path into /etc/environments
-- copy check borg
-- schedule check borg
-- above only when borgmatic is enabled
