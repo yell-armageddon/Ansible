@@ -28,6 +28,14 @@ With the exception of borgmatic (the backup solution), all services are containe
 - Pihole (ad blocking, custom DNS)
 - Borgmatic (automated backup)
 
+## Logging and reports
+- Daily check of relevant S.M.A.R.T. values (see below).
+- Daily check for backup run
+- weekly S.M.A.R.T. long test
+- weekly ZFS scrub (verification of file system)
+- weekly disk report (summary of all above and free disk space)
+The daily checks sent an email in case of error, while the disk report is sent out every week.
+
 ## Disk Setup and Backups
 The scripts assume a four-disk setup, as follows:
 - 64GB SSD to install the operating system
