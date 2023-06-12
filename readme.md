@@ -93,7 +93,7 @@ There are a few points where your preferences may differ:
 
 - Suspending HDD: You have the option to suspend the hard drives or not. However, keep in mind that suspending hard drives can put them under additional stress and potentially shorten their lifespan. In my setup, I consume 24W in idle and 40W during load while keeping the disks spinning. Enabling power-saving for the HDDs reduces the idle load to 11W.
 
-Dropping ECC support, one can get used desktop machines for cheap on ebay. For example, i bought an Fujitsu D756 for 60 Euro. By default it can host two 3.5 HDD and with a bit of tinkering a third can be added.
+Dropping ECC support, one can get second-hand desktop machines for cheap on ebay. For example, i bought an Fujitsu D756 for 60 Euro. By default it can host two 3.5 HDD and with a bit of tinkering a third can be added.
 
 To select suitable hard drives, refer to the [black blaze disk reports](https://www.backblaze.com/b2/hard-drive-test-data.html) for reliability details. Additionally, you can find extensive discussions on power consumption in a thread on the tweakers forum (Belgian)](https://gathering.tweakers.net/forum/list_messages/2096876).
 
