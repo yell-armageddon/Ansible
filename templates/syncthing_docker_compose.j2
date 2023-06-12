@@ -11,7 +11,7 @@ services:
       - PUID=1000
       - PGID=1000
     volumes:
-      - "/home/{{usernames.syncthing}}/data:/var/syncthing"
+      - "{{dockerpath}}/syncthing/data:/var/syncthing"
 
     ports:
       - 8384:8384 # Web UI

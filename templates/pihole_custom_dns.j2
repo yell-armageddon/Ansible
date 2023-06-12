@@ -7,5 +7,9 @@
 {% if app_syncthing.using %}
 {{ansible_default_ipv4.address}} {{app_syncthing.host}}
 {% endif %}
+
 {{ansible_default_ipv4.address}} {{app_pihole.host}}
+
+{% if app_heimdall.using %}
 {{ansible_default_ipv4.address}} {{app_heimdall.host}}
+{% endif %}

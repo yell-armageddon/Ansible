@@ -1,2 +1,3 @@
 #!/bin/bash
-docker exec  bookstack_db mysqldump --opt --default-character-set=utf8mb4  -u {{app_bookstack.database_user}}  --password='{{app_bookstack.database_password}}' {{app_bookstack.database}} > /home/{{usernames.bookstack}}/backup/backup.sql 2>&1
+DOW=$(date +%u)
+docker exec  bookstack_db mysqldump --opt --default-character-set=utf8mb4  -u {{app_bookstack.database_user}}  --password='{{app_bookstack.database_password}}' {{app_bookstack.database}} > "{{dockerpath}}/bookstack/backup/backup${DOW}.sql" 2>&1

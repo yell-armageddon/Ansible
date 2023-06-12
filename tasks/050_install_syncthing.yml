@@ -7,15 +7,14 @@
     uid: 1045
     group: docker
 
-
-- name: Create a new data set "syncthing"
+- name: Create folder {{dockerpath}}/syncthing
   become: true
-  community.general.zfs:
-    name: "{{zfs.pool_name}}/syncthing"
-    state: present
-    extra_zfs_properties:
-      setuid: off
-      mountpoint: /home/{{usernames.syncthing}}/data
+  ansible.builtin.file:
+    path: "{{dockerpath}}/syncthing"
+    state: directory
+    owner: "{{usernames.syncthing}}"  
+    group : docker 
+
 
 
 - name: Ensure docker compose config in place
@@ -35,3 +34,10 @@
     project_src: "/home/{{usernames.syncthing}}"
     files:
      - docker-compose.yml 
+
+- name: Create symbolic link 
+  become: true
+  file:
+    src:  "{{zfs.pool_mountpoint}}/docker/syncthing/data"
+    dest: "{{zfs.pool_mountpoint}}/samba/syncthing"
+    state: link

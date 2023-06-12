@@ -6,8 +6,16 @@
       comment: bookstack docker user
       uid: 1040
       group: docker
-  
-  - name: create folders
+
+  - name: Create folder {{dockerpath}}/bookstack
+    become: true
+    ansible.builtin.file:
+      path: "{{dockerpath}}/bookstack"
+      state: directory
+      owner: "{{usernames.bookstack}}"  
+      group : docker 
+
+  - name: create subfolders
     become: true
     become_user: "{{usernames.bookstack}}"
     ansible.builtin.file:
@@ -15,8 +23,8 @@
       state: directory
       #mode: '0755'
     loop:
-      - {src: "/home/{{usernames.bookstack}}/backup"}
-      - {src: "/home/{{usernames.bookstack}}/config"}
+      - {src: "{{dockerpath}}/bookstack/backup"}
+      - {src: "{{dockerpath}}/bookstack/config"}
       
 
   - name: Ensure docker compose config in place
@@ -24,13 +32,13 @@
     become_user: "{{usernames.bookstack}}"
     template:
       src: ../templates/bookstack_docker_compose.j2
-      dest: "{{ vbookstack_compose }}"
+      dest: "{{ app_bookstack.docker_compose_target }}"
       backup: true
       mode: 0640
 
   - name: Pull bookstack image
     become: true
-    become_user: "{{vbookstack}}"
+    become_user: "{{usernames.bookstack}}"
     community.docker.docker_image:
       name: lscr.io/linuxserver/bookstack
       source: pull
@@ -67,7 +75,7 @@
     become: true
     become_user:  "{{usernames.bookstack}}"
     community.docker.docker_compose:
-      project_src: /home/{{vbookstack}}
+      project_src: "/home/{{usernames.bookstack}}"
       files:
       - docker-compose.yml
 
@@ -76,7 +84,7 @@
     become_user:  "{{usernames.bookstack}}"
     template:
       src: ../templates/bookstack_db_backup.j2
-      dest: "/home/{{vbookstack}}/db_backup.sh"
+      dest: "{{dockerpath}}/bookstack/db_backup.sh"
       backup: true
       mode: 0750
 
@@ -86,7 +94,7 @@
       name: "check dirs"
       minute: "0"
       hour: "3"
-      job: "/home/{{usernames.bookstack}}/db_backup.sh"
+      job: "{{dockerpath}}/bookstack/db_backup.sh"
       cron_file: ansible_bookstack
       user: root
       

@@ -5,8 +5,31 @@
       comment: nextcloud docker user
       uid: 1041
       group: docker
-  
+
+  - name: Create folder {{dockerpath}}/nextcloud
+    become: true
+    ansible.builtin.file:
+      path: "{{dockerpath}}/nextcloud"
+      state: directory
+      owner: "{{usernames.nextcloud}}"  
+      group : docker 
+
+  - name: Create folder {{dockerpath}}/nextcloud
+    become: true
+    ansible.builtin.file:
+      path: "{{dockerpath}}/nextcloud/app"
+      state: directory
+      owner: "{{usernames.nextcloud}}"  
+      group : docker 
       
+  - name: Create folder {{dockerpath}}/nextcloud
+    become: true
+    ansible.builtin.file:
+      path: "{{dockerpath}}/nextcloud/app/config"
+      state: directory
+      owner: "{{usernames.nextcloud}}"  
+      group : docker 
+
   - name: Create a network net_nextcloud
     become: true
     become_user: "{{usernames.nextcloud}}"
@@ -36,15 +59,15 @@
     become: true
     become_user: "{{usernames.nextcloud}}"
     community.docker.docker_compose:
-      project_src: /home/{{{{usernames.nextcloud}}}}
+      project_src: /home/{{usernames.nextcloud}}
       files:
       - docker-compose.yml 
 
-  - name: Ensure additional config is in place "/home/{{ {{usernames.nextcloud}} }}/app/config/add.config.php" 
+  - name: Ensure additional config is in place "/home/{{usernames.nextcloud}}/app/config/add.config.php" 
     become: true
     template:
       src: ../templates/nextcloud_add_config.j2
-      dest: "/home/{{ {{usernames.nextcloud}} }}/app/config/add.config.php"
+      dest: "{{dockerpath}}/nextcloud/app/config/add.config.php"
       backup: true
       mode: 0640
       owner: www-data
@@ -55,9 +78,9 @@
     become_user: "{{usernames.nextcloud}}"
     template:
       src: ../templates/nextcloud_db_backup.j2
-      dest: "/home/{{ {{usernames.nextcloud}}}}/db_backup.sh"
+      dest: "{{dockerpath}}/nextcloud/db_backup.sh"
       backup: true
-      mode: 0750
+      mode: 0700
 
   - name: schedule a database backup every night
     become: true      
@@ -65,6 +88,6 @@
       name: "check dirs"
       minute: "0"
       hour: "3"
-      job: "/home/{{ usernames.nextcloud}}/db_backup.sh"
+      job: "{{dockerpath}}/nextcloud/db_backup.sh"
       cron_file: ansible_nextcloud
       user: root

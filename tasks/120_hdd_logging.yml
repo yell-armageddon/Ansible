@@ -55,7 +55,7 @@
       name: "check dirs"
       minute: "55"
       hour: "23"
-      weekday: 6 # saturday
+      weekday: 5 # Friday
       job: 
         "{{script_location}}/ans_smart_long_test.sh"
       cron_file: ansible_weekly_smart_test
@@ -74,7 +74,7 @@
     ansible.builtin.cron:
       name: "check dirs"
       minute: "55"
-      hour: "17"
+      hour: "09"
       weekday: 0 # sunday
       job: 
         "{{script_location}}/ans_smart_long_test.sh"

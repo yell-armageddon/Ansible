@@ -1,21 +1,9 @@
 location:
     source_directories:
-        {% if app_nextcloud.using  %}
-        -    {{app_nextcloud.backupdir}}
-        {% endif %}
-
-        {% if app_bookstack.using  %}
-        -    {{app_bookstack.backupdir}}
-        -    {{app_bookstack.backupdb}}
-        {% endif %}
-
-        {% if app_syncthing.using %}
-        - "/home/{{usernames.syncthing}}/data"
-        {% endif %}
-
         {% for app in borgmatic.additional_backup_dirs %}
         - {{app}}
         {% endfor %}
+        - {{dockerpath}}
 
 
 

@@ -90,6 +90,9 @@
         src: ../templates/smb.conf.j2
         validate: 'testparm -s %s'
         mode: '0644'
-      notify:
-        - Restart Samba services
       tags: samba
+
+    - name: Restart Samba service
+      service:
+        name: smbd
+        state: restarted

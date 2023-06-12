@@ -20,7 +20,7 @@ services:
       - LETSENCRYPT_HOST={{app_bookstack.host}}
       - LETSENCRYPT_EMAIL={{app_nginx.letsencrypt_email}}
     volumes:
-      - /home/{{usersnames.bookstack}}/config:/config
+      - {{dockerpath}}/bookstack/config:/config
 
 
     ports:
@@ -43,8 +43,8 @@ services:
       - MYSQL_USER={{app_bookstack.database_user}}
       - MYSQL_PASSWORD={{app_bookstack.database_password}}
     volumes:
-      - /home/{{usersnames.bookstack}}/dbconfig:/config
-      - /home/{{usersnames.bookstack}}/backup:/backup
+      - {{dockerpath}}/bookstack/dbconfig:/config
+      - {{dockerpath}}/bookstack/backup:/backup
     restart: unless-stopped
 
 networks:

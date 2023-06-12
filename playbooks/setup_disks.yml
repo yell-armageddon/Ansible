@@ -1,0 +1,29 @@
+- hosts: myvhosts
+  vars_files:
+    - "{{ansible_vault}}/vars.yml"
+
+  vars_prompt:
+    - name: "setup_zfs"
+      prompt: "Task 017: Should ZFS be set-up? This might cause loss of data! (yes/no) "
+    - name: "create_zfs"
+      prompt: "Task 017: Create a seperate zfs for nextcloud and mount it to /home/{{usersnames.nextcloud}} (yes/no)?"
+    - name: "setup_luks"
+      prompt: "Task 018: Create new LUKS partition/disk? This might cause data loss. (yes/no)"
+
+  tasks:  
+
+# above prompts check whether this should be run
+  - name: Setup ZFS
+    ansible.builtin.include_tasks:
+      file: ../tasks/017_setup_zfs.yml
+
+  - name: Setup LUKS
+    ansible.builtin.include_tasks:
+      file: ../tasks/018_create_backup_device.yml
+
+  - name: Mount LUKS
+    ansible.builtin.include_tasks:
+      file: ../tasks/019_mount_the_backup_device.yml
+
+
+ 

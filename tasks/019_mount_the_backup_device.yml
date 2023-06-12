@@ -2,7 +2,7 @@
   - name: Ensure the luks key is in place "{{luks.key_location}}"
     become: true
     template:
-      src: "{{local_luks_key_location}}"
+      src: "{{control_node.luks_key_location}}"
       dest: "{{luks.key_location}}"
       backup: true
       mode: 0400
@@ -12,7 +12,7 @@
     ansible.builtin.lineinfile:
       path: /etc/crypttab
       search_string: '{{luks.mapper_name}}'
-      line: "{{luks.mapper_name}}      ID={{luks.device_id}}      {{luks_key_location}}   luks"
+      line: "{{luks.mapper_name}}      UUID={{luks.device_id}}      {{luks.key_location}}   luks"
 
   - name: Ensure mountpoint exists
     become: true

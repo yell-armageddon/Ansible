@@ -13,8 +13,7 @@
   vars_prompt:
     - name: "setup_zfs"
       prompt: "Did you check this file manually? (yes/no) "
-    - name: "create_zfs"
-      prompt: "Create a seperate zfs for nextcloud and mount it to /home/{{usersnames.nextcloud}} (yes/no)?"
+
 
 ## zfs key creation
 ## dd if=/dev/urandom of=zfs_key bs=32 count=1

@@ -1,7 +1,7 @@
   - name: Ensure the luks key is in place "{{luks.key_location}}"
     become: true
     template:
-      src: "{{control_node.local_luks_key_location}}"
+      src: "{{control_node.luks_key_location}}"
       dest: "{{luks.key_location}}"
       backup: true
       mode: 0400
@@ -9,7 +9,7 @@
   - name: Create LUKS container (remains unchanged if it already exists)
     become: true
     community.crypto.luks_device:
-     device: "/dev/disk/by-id/{{luks.device_id}}"
+     device: "{{luks.device_id}}"
      state: "opened"
      name: "{{luks.mapper_name}}"
      keyfile: "{{luks.key_location}}"

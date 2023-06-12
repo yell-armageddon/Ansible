@@ -9,11 +9,9 @@
   
   - debug: var=app_nginx.docker_compose_target
 
-
-  - name: copy script to check the recent borg backups
+  - name: Create symbolic link 
     become: true
-    template:
-      src: ../templates/scripts/disk_report.j2
-      dest: "{{script_location}}/ans_disk_report.py"
-      backup: true
-      mode: 0540
+    file:
+      src:  "{{zfs.pool_mountpoint}}/docker/syncthing/data"
+      dest: "{{zfs.pool_mountpoint}}/samba/syncthing"
+      state: link

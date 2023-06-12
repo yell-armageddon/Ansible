@@ -6,6 +6,7 @@
   - name: Set ZFS parameters
     set_fact:
       zfs_pool_state:     present
+      zfs_pool_mode: #mirror
       zfs_O_options: ## encryption options
       - "encryption=on"
       - "keyformat=raw"
@@ -16,10 +17,11 @@
 
 
 
+
   - name: Ensure the zfs key is in place "{{zfs.key_location}}"
     become: true
     template:
-      src: "{{local_zfs_key_location}}"
+      src: "{{control_node.zfs_key_location}}"
       dest: "{{zfs.key_location}}"
       backup: true
       mode: 0600
@@ -34,16 +36,18 @@
   - name: Create tank zpool       zpool create
       {{'-O' if zfs_O_options else ''  }} {{ zfs_O_options | join(' -O ') }}
       {{ '-o' if zfs_pool_options else ''  }} {{ zfs_pool_options | join(' -o ') }}
-      {{ '-m ' + zfs_pool_mountpoint if zfs.pool_mountpoint else '' }}
+      {{ '-m ' + zfs.pool_mountpoint if zfs.pool_mountpoint else '' }}
       {{ zfs.pool_name }}
+      {{ zfs_pool_mode if zfs_pool_mode else '' }}
       {{ zfs.pool_devices | join(' ') }}
     become: true
     command: >-
-      zpool create
+      zpool create 
       {{'-O' if zfs_O_options else ''  }} {{ zfs_O_options | join(' -O ') }}
       {{ '-o' if zfs_pool_options else ''  }} {{ zfs_pool_options | join(' -o ') }}
-      {{ '-m ' + zfs_pool_mountpoint if zfs.pool_mountpoint else '' }}
+      {{ '-m ' + zfs.pool_mountpoint if zfs.pool_mountpoint else '' }}
       {{ zfs.pool_name }}
+      {{ zfs_pool_mode if zfs_pool_mode else '' }}
       {{ zfs.pool_devices | join(' ') }}
     when:
       - zfs_pool_state | default('present') == 'present'
@@ -70,45 +74,15 @@
     when:
       - setup_zfs | bool
 
-  - name: Create a new file system /home/{{usernames.nextcloud}}
+  - name: Create a new data set "{{zfs.docker_fs}}"
     become: true
     community.general.zfs:
-      name: "{{zfs.pool_name}}/nextcloud"
+      name: "{{zfs.pool_name}}/{{zfs.docker_fs}}"
       state: present
       extra_zfs_properties:
         setuid: off
-        mountpoint: /home/{{usernames.nextcloud}}
-    when: 
-    - create_zfs | bool
-    - setup_zfs | bool
-    - app_nextcloud.using    | bool
-
-
-  - name: Add the user nextcloud
-    become: true  
-    ansible.builtin.user:
-      name: "{{usernames.nextcloud}}"
-      comment: nextcloud docker user
-      uid: 1041
-      group: docker
     when:
-      - create_zfs | bool
       - setup_zfs | bool
-      - app_nextcloud.using  | bool  
-
-  - name: Set zfs permissions
-    become: true  
-    ansible.builtin.file:
-      state: directory
-      path: "/home/{{usernames.nextcloud}}"
-      owner: nextcloud
-      group: docker
-      mode: '0750'
-    when:
-      - create_zfs | bool
-      - setup_zfs | bool
-      - app_nextcloud.using     | bool
-
 
 
   - name: Service to auto load zfs key

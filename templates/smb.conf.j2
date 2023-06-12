@@ -94,19 +94,64 @@
   include = {{ samba_configuration_dir }}/{{ samba_homes_include }}
 {% endif %}
 
-## Fixed Backup directories
-%[Backup]
-%comment = hidden backups
-%hide unreadable = yes 
-%valid users = @{{vbackup_group}}
-%force user = {{vbackup_user}}
-%create mode = 0750
-%writeable = no
-%path = /media/backup
+
 
 {% if samba_shares|length > 0 %}
 ## Shared directories
 {% for share in samba_shares %}
+[{{ share.name }}]
+{% if share.comment is defined %}
+  comment = {{ share.comment }}
+{% endif %}
+{% if share.vfs_objects is defined and share.vfs_objects|length > 0 %}
+  vfs objects = {% for obj in share.vfs_objects %}{{obj.name}} {% endfor %}
+
+{% for obj in share.vfs_objects %}
+{% if obj.options is defined %}
+{% if obj.options|length > 0 %}
+{% for opt in obj.options %}
+  {{ obj.name }}:{{ opt.name }} = {{ opt.value }}
+{% endfor %}
+{% endif %}
+{% endif %}
+{% endfor %}{% endif %}
+  path = {{ share.path|default([samba_shares_root,share.name]|join('/')) }}
+  public = {{ share.public|default('no') }}
+{% if share.valid_users is defined %}
+  valid users= {{ share.valid_users }}
+{% endif %}
+{% if share.write_list is defined %}
+  write list = {{ share.write_list }}
+{% endif %}
+{% if share.group is defined %}
+  force group = {{ share.group }}
+{% endif %}
+{% if share.guest_ok is defined %}
+  guest ok = {{ share.guest_ok }}
+{% endif %}
+{% if share.browseable is defined %}
+  browseable = {{ share.browseable }}
+{% endif %}
+{% if share.writable is defined %}
+  writable = {{ share.writable }}
+{% endif %}
+{% if share.hide_unreadable is defined %}
+  hide unreadable = {{ share.hide_unreadable }}
+{% endif %}
+  create mode = {{ share.create_mode|default('0664') }}
+  force create mode = {{ share.force_create_mode|default('0664') }}
+  directory mode = {{ share.directory_mode|default('0775') }}
+  force directory mode = {{ share.force_directory_mode|default('0775') }}
+{% if share.include_file is defined %}
+  include = {{ samba_configuration_dir }}/{{ share.include_file | basename }}
+{% endif %}
+
+{% endfor %}
+{% endif%}
+
+{% if syncthing_samba_shares|length > 0 %}
+## Syncthing Shared directories
+{% for share in syncthing_samba_shares %}
 [{{ share.name }}]
 {% if share.comment is defined %}
   comment = {{ share.comment }}

@@ -1,0 +1,33 @@
+
+  - name: Add the user portainer
+    become: true  
+    ansible.builtin.user:
+      name: "{{usernames.portainer}}"
+      comment: bookstack docker user
+      uid: 1047
+      group: docker
+
+  - name: Create folder {{dockerpath}}/portainer
+    become: true
+    ansible.builtin.file:
+      path: "{{dockerpath}}/portainer"
+      state: directory
+      owner: "{{usernames.portainer}}"  
+      group : docker 
+
+  - name: Ensure docker compose config in place
+    become: true
+    become_user: "{{usernames.portainer}}"
+    template:
+      src: ../templates/portainer_docker_compose.j2
+      dest: "{{ app_portainer.docker_compose_target }}"
+      backup: true
+      mode: 0640
+
+  - name: deploy Docker Compose stack
+    become: true
+    become_user:  "{{usernames.portainer}}"
+    community.docker.docker_compose:
+      project_src: "/home/{{usernames.portainer}}"
+      files:
+      - docker-compose.yml
