@@ -18,7 +18,7 @@
   - name: Create /etc/mailname
     become: true
     ansible.builtin.shell:
-      cmd: hostname --fqdn > /etc/mailname
+      cmd: "echo {{email.address}} > /etc/mailname"
 
   - name: Create password hash file /etc/postfix/sasl_passwd.db
     become: true
