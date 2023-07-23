@@ -2,7 +2,7 @@ import pandas as pd
 import os
 pd.set_option('display.max_columns', 500)
 
-devices = [ "/dev/disk/by-id/{{luks.device_id}}"]
+devices = [ "{{luks.device_path}}"]
 {% for item in zfs.pool_devices %}
 devices.append("{{item}}")
 {% endfor %}

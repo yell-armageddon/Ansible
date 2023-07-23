@@ -1,6 +1,7 @@
 - hosts: myvhosts
   vars_files:
     - "{{ansible_vault}}/vars.yml"
+    - "{{ansible_vault}}/samba.yml"
 #    - ../vars/samba.yml
  #   - ../vars/vars.yml
 
@@ -8,10 +9,15 @@
   tasks:  
   
   - debug: var=app_nginx.docker_compose_target
-
-  - name: Create symbolic link 
-    become: true
-    file:
-      src:  "{{zfs.pool_mountpoint}}/docker/syncthing/data"
-      dest: "{{zfs.pool_mountpoint}}/samba/syncthing"
-      state: link
+  - name: Create syncthing share directories
+    become: true  
+    ansible.builtin.file:
+      state: directory
+      path: "{{ item.path | default([syncthing_samba_shares, item.name] | join('/')) }}"
+      owner: "{{ item.owner | default('root') }}"
+      group: "{{ item.group | default('users') }}"
+      mode: "{{ item.directory_mode | default('0775') }}"
+      setype: "{{ item.setype | default('samba_share_t') }}"
+      recurse: yes
+    with_items: "{{ syncthing_samba_shares }}"
+    tags: samba   

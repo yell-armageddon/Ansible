@@ -76,6 +76,19 @@
       with_items: "{{ samba_shares }}"
       tags: samba      
 
+    - name: Create syncthing share directories
+      become: true  
+      ansible.builtin.file:
+        state: directory
+        path: "{{ item.path | default([syncthing_samba_shares, item.name] | join('/')) }}"
+        owner: "{{ item.owner | default('root') }}"
+        group: "{{ item.group | default('users') }}"
+        mode: "{{ item.directory_mode | default('0775') }}"
+        setype: "{{ item.setype | default('samba_share_t') }}"
+        recurse: yes
+      with_items: "{{ syncthing_samba_shares }}"
+      tags: samba   
+
     - name: Ensure Samba is running and set to start on boot
       become: true  
       ansible.builtin.service:
