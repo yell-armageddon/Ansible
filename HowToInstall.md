@@ -54,6 +54,32 @@ ansible-playbook playbooks/019_mount_the_backup_device.yml
 
 ## Packages & Device Setup
 1. run 
-```ansible-playbook playbooks/010_install_packages.yml
-    ansible-playbook playbooks/015_sync_dns_job.yml```
+```
+ansible-playbook playbooks/010_install_packages.yml
+    ansible-playbook playbooks/015_sync_dns_job.yml
+```
+### nginx installation
+Before running the next playbook, make sure that portforwarding is enabled in your router to the new ubuntu server for https (port 443 and 80). LetsEncrypt will require port 80 to assign a certificate.
+`ansible-playbook playbooks/020_install_nginx.yaml`
 
+### bookstack installation
+after running the playbook
+`ansible-playbook playbooks/030_install_bookstack.yml`
+login using`admin@admin.com` with a password of `password` and change the default password.
+
+### nextcloud installation
+after running the playbook
+`ansible-playbook playbooks/040_install_nextcloud.yml`
+open nextcloud to do the initial configuration:
+
+|field| value| comment|
+|------------ | ------------|  ------------| 
+|username | admin| free choice of username|
+|password | \* | free choice of password|
+|data folder| /var/www/html/data | leave unchanged|
+|database user | nextcloud | vnextcloud_db_user| 
+|database password | \* | vnextcloud_db_password|
+|database name | nextcloud | can't be changed|
+|database host | nextcloud-mariadb| can't be changed| 
+
+Next, install all recommended apps.
