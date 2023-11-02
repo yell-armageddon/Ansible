@@ -41,7 +41,7 @@ config:
 
 3. attach new device to zpool
 `zpool attach <tank> <old device> <new device>`
-`# zpool attach data wwn-0x5000c500e3357a41 ata-ST8000DM004-2U9188_ZR152X5F`
+`# zpool attach data wwn-0x5000c500e ata-ST8000DM004-F`
 
 ```
 # zpool status data
