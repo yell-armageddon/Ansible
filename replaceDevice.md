@@ -23,7 +23,7 @@ errors: No known data errors
 ```
 
 2. split the device from the pool data and create a new pool data_backup
-`zpool splot <current pool> <split pool> <device to be removed>`
+`zpool split <current pool> <split pool> <device to be removed>`
 `zpool split data data_backup ata-ST8000DM004-H
 
 device is removed - zpool is no mirror
