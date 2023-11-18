@@ -82,5 +82,5 @@ data_backup/syncthing  no
 cannot mount 'data_backup': encryption key not loaded
 ```
 7. load zfs key
-`sudo zfs load-key -L file:///home/yell/vault/zfs_key_yellserver data_backup`
+`sudo zfs load-key -L file:///home/user/my_vault/zfs_key data_backup`
 8. mount with key `zfs mount data_backup`
