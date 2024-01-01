@@ -1,0 +1,51 @@
+
+- name: Add the user homer
+  become: true  
+  ansible.builtin.user:
+    name: "{{usernames.homer}}"
+    comment: homer docker user
+    uid: 1280
+    group: docker
+
+- name: Create folder {{dockerpath}}/homer
+  become: true
+  ansible.builtin.file:
+    path: "{{dockerpath}}/homer"
+    state: directory
+    owner: "{{usernames.homer}}"  
+    group : docker 
+
+- name: create subfolders
+  become: true
+  become_user: "{{usernames.homer}}"
+  ansible.builtin.file:
+    path: "{{item.src}}"
+    state: directory
+  loop:
+    - {src: "{{dockerpath}}/homer/assets"}
+
+
+
+- name: Create a network net_homer
+  become: true
+  become_user: "{{usernames.homer}}"
+  docker_network:
+    name: net_homer
+
+- name: Ensure docker compose config in place
+  become: true
+  become_user:  "{{usernames.homer}}"
+  template:
+    src: ../templates/homer_docker_compose.j2
+    dest: "{{ app_homer.docker_compose_target }}"
+    backup: true
+    mode: 0640
+
+
+- name: deploy Docker Compose stack
+  become: true
+  become_user:  "{{usernames.homer}}"
+  community.docker.docker_compose:
+    project_src: "/home/{{usernames.homer}}"
+    files:
+     - docker-compose.yml 

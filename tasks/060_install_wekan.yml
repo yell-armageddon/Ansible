@@ -1,9 +1,9 @@
 
-- name: Add the user syncthing
+- name: Add the user wekan
   become: true  
   ansible.builtin.user:
     name: "{{usernames.wekan}}"
-    comment: syncthing docker user
+    comment: wekan docker user
     uid: 1260
     group: docker
 
