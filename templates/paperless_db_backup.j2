@@ -1,0 +1,3 @@
+#!/bin/bash
+DOW=$(date +%u)
+docker exec  paperless-db-1 mysqldump --opt --default-character-set=utf8mb4  -u {{app_paperless.database_user}}  --password='{{app_paperless.database_password}}' {{app_paperless.database_user}} > {{dockerpath}}/paperless/db/backup_dow_${DOW}.sql 2>&1

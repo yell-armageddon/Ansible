@@ -7,3 +7,12 @@ curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_nex
 {% if app_bookstack.using  %}
 curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_bookstack.host}}" https://www.goip.de/setip?    
 {% endif %}
+
+{% if app_navidrome.using  %}
+curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_navidrome.host}}" https://www.goip.de/setip?    
+{% endif %}
+
+
+{% if app_wekan.using  %}
+curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_wekan.host}}" https://www.goip.de/setip?    
+{% endif %}

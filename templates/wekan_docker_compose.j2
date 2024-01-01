@@ -1,0 +1,46 @@
+version: "3"
+services:
+
+  wekandb:
+    image: mongo:4.4.18 #last version without AVX support required
+    container_name: wekan-db
+    restart: always
+    networks:
+      - net_wekan
+    expose:
+      - 3306
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - "{{dockerpath}}/wekan/db/data:/var/lib/mysql"
+      - "{{dockerpath}}/wekan/db/data:/data/db"
+      - "{{dockerpath}}/wekan/db/dump:/dump"
+
+  wekan:
+    image: ghcr.io/wekan/wekan:latest
+    container_name: wekan
+    restart: always
+    networks:
+      - net_wekan
+      - net_nginx_proxy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - ROOT_URL=https://{{app_wekan.host}}
+      - VIRTUAL_HOST={{app_wekan.host}}
+      - LETSENCRYPT_HOST={{app_wekan.host}}
+      - LETSENCRYPT_EMAIL={{app_nginx.letsencrypt_email}}
+      - WITH_API=true
+      - MONGO_URL=mongodb://wekan-db:27017/wekan   # Update this line
+
+    depends_on:
+      - wekandb
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - "{{dockerpath}}/wekan/data:/home/wekan"
+    restart: unless-stopped
+
+networks:
+  net_nginx_proxy:
+    external: true
+  net_wekan:
+    external: true

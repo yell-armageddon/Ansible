@@ -1,0 +1,9 @@
+- hosts: myvhosts
+  vars_files:
+    - "{{ansible_vault}}/vars.yml"
+
+
+  tasks:
+  - name: Setup wekan
+    ansible.builtin.include_tasks:
+      file: ../tasks/060_install_wekan.yml
