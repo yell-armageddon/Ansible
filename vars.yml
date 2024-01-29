@@ -1,0 +1,163 @@
+
+# This file defines all required variables to be used to setup all containers.
+# control node describes the local machine where ansible is run.
+control_node_user: 
+control_node:
+  email: 
+  repo_backup_path: '/home/{{ control_node_user }}/AnsibleBackup'
+  zfs_key_location: '/home/{{ control_node_user }}/AnsibleSecrets/zfs_key'
+  luks_key_location: '/home/{{ control_node_user }}/AnsibleSecrets/luks_key'
+
+hdd_logs: /root
+# DNS entries
+dns:
+  host: my.goip.it
+  localip: 192....
+  user: MyDNSUser
+  password: MyPassword
+
+
+# ZFS configuration
+## ZFS is set up as two mirrored devices
+## specify the devices to be used.
+zfs:
+   pool_name: data
+   pool_mountpoint: /media
+   key_location: /etc/zfs_data_key
+   docker_fs: docker
+   pool_devices:
+    - /dev/sdc
+    - /dev/sdd
+
+dockerpath: "{{zfs.pool_mountpoint}}/{{zfs.docker_fs}}"
+
+#LUKS setup
+## this device is used as a additional backup
+luks:
+  # /dev/disk/by-id/{{device_id}} specifies the device to be used
+  device_id: sdb
+  key_location: /etc/luks_key_2
+  mountpoint: /backup
+  mapper_name: dm_crypt-2
+
+# Backups
+## backups are relying on daily borgmatic runs to the ZFS and LUKS devices.
+borgmatic:
+  repo_one: /media/backup/repo
+  repo_two: /backup/repo
+  passhprase: MyBorgPassword
+  group: mybackup
+  user: repo
+## specify additional paths to add to the repo. list cannot be empty.
+  additional_backup_dirs:
+    - /root
+
+# Email credentials
+## these are used to sent important warnings
+## create a new, seperate email for this. e.g. proton mail
+# Email credentials
+## these are used to sent important warnings
+## create a new, seperate email for this.
+email:
+  address: myEmail@outlook.com
+  password: myPassword
+  server: smtp.office365.com
+  port: 587
+
+# Docker container
+## list of variables relevant for each docker container
+## if app_<docker>.using is false, the container will not be used.
+
+## usernames running the individual docker container.
+usernames:
+  nginx: nginx
+  nextcloud: nextcloud
+  bookstack: bookstack
+  syncthing: syncthing
+  pihole: pihole
+  navidrome: navidrome
+  wekan: wekan
+  paperless: paperless
+  homer: homer
+  abs: abs
+
+app_nginx:
+  user: nginx
+  docker_compose_target: "/home/{{usernames.nginx}}/docker-compose.yml"
+  letsencrypt_email: myLetsEncryptEmail@gmail.com
+
+app_nextcloud:
+  using: true
+  host: nextcloud.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.nextcloud}}/docker-compose.yml
+  database: "{{usernames.nextcloud}}"
+  database_user: "{{usernames.nextcloud}}"
+  database_password: "MyDatabasePassword"
+  database_root_password: "MyDatabaseRootPassword"
+  backupdir: "/home/{{usernames.nextcloud}}/app"
+
+
+app_bookstack:
+  using: true
+  host: bookstack.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.bookstack}}/docker-compose.yml
+  database: "{{usernames.bookstack}}app"
+  database_host: "{{usernames.bookstack}}_db"
+  database_user: "{{usernames.bookstack}}"
+  database_password: "MyDatabasePassword"
+  database_root_password: "MyDatabaseRootPassword"
+  backupdir: /home/{{usernames.bookstack}}/config/www
+  backupdb: /home/{{usernames.bookstack}}/backup
+
+app_syncthing:
+  using: true
+  host: syncthing.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.syncthing}}/docker-compose.yml
+
+app_wekan:
+  using: true
+  host: wekan.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.wekan}}/docker-compose.yml
+  database_root_password: "MyDatabaseRootPassword"
+  database_password: "MyDatabasePassword"
+  database: "wekan"
+  database_user: "wekan"
+
+app_pihole:
+  using: true
+  host: pihole.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.pihole}}/docker-compose.yml
+  password: "MyPiHolePassword"
+  dns_server_1: 8.8.8.8 # dns server need to be set manually
+  dns_server_2: 8.8.4.4
+  # also need to add blocklist manually 
+  # https://github.com/RPiList/specials/blob/54876178ffa7e4d1224ac81b00bedd0040f65802/Blocklisten.md
+
+
+app_navidrome:
+  using: true
+  host: navidrome.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.navidrome}}/docker-compose.yml
+
+app_paperless:
+  comment: To change the password, docker into the webserver and run python manage.py  createsuperuser
+  using: true
+  host: paperless.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.paperless}}/docker-compose.yml
+  docker_compose_env_target:  /home/{{usernames.paperless}}/docker-compose.env
+  user: paperless
+  password: "MyPaperlessPasword"
+  email: Mypaperless@gmail.com
+  database_user: "paperless"
+  database_password: "MyDatabasePassword"
+  PAPERLESS_SECRET_KEY: MyPAPERLESSSECRETKEY
+  data_dir: 
+
+app_homer:
+  user: homer
+  docker_compose_target: "/home/{{usernames.homer}}/docker-compose.yml"
+
+app_abs:
+  using: true
+  host: abs.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.abs}}/docker-compose.yml
