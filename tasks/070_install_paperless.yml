@@ -14,49 +14,49 @@
     owner: "{{usernames.paperless}}"  
     group : docker 
 
-  - name: Create folder {{dockerpath}}/paperless
-    become: true
-    ansible.builtin.file:
+- name: Create folder {{dockerpath}}/paperless
+  become: true
+  ansible.builtin.file:
       path: "{{dockerpath}}/paperless"
       state: directory
       owner: "{{usernames.paperless}}"  
       group : docker 
   
-  - name: create subfolders
-    become: true
-    become_user: "{{usernames.paperless}}"
-    ansible.builtin.file:
+- name: create subfolders
+  become: true
+  become_user: "{{usernames.paperless}}"
+  ansible.builtin.file:
       path: "{{item.src}}"
       state: directory
       #mode: '0755'
-    loop:
+  loop:
       - {src: "{{dockerpath}}/paperless/db"}
       - {src: "{{dockerpath}}/paperless/data"}
       - {src: "{{dockerpath}}/paperless/media"}
       - {src: "{{dockerpath}}/paperless/export"}
       - {src: "{{dockerpath}}/paperless/consume"}
 
-  - name: Ensure the database backup script is inplace
-    become: true
-    become_user: "{{usernames.paperless}}"
-    template:
+- name: Ensure the database backup script is inplace
+  become: true
+  become_user: "{{usernames.paperless}}"
+  template:
       src: ../templates/paperless_db_backup.j2
       dest: "{{dockerpath}}/paperless/db_backup.sh"
       backup: true
       mode: 0700
 
-  - name: Ensure the database restore script is inplace
-    become: true
-    become_user: "{{usernames.paperless}}"
-    template:
+- name: Ensure the database restore script is inplace
+  become: true
+  become_user: "{{usernames.paperless}}"
+  template:
       src: ../templates/paperless_db_restore.j2
       dest: "{{dockerpath}}/paperless/db_restore.sh"
       backup: true
       mode: 0700
 
-  - name: schedule a database backup every night
-    become: true      
-    ansible.builtin.cron:
+- name: schedule a database backup every night
+  become: true      
+  ansible.builtin.cron:
       name: "check dirs"
       minute: "0"
       hour: "3"
@@ -64,25 +64,23 @@
       cron_file: ansible_paperless
       user: root
 
-  - name: Ensure docker compose config in place
-    become: true
-    become_user: "{{usernames.paperless}}"
-    template:
+- name: Ensure docker compose config in place
+  become: true
+  become_user: "{{usernames.paperless}}"
+  template:
       src: ../templates/paperless_docker_compose.j2
       dest: "{{ app_paperless.docker_compose_target }}"
       backup: true
       mode: 0640
 
-  - name: Ensure docker compose env in place
-    become: true
-    become_user: "{{usernames.paperless}}"
-    template:
+- name: Ensure docker compose env in place
+  become: true
+  become_user: "{{usernames.paperless}}"
+  template:
       src: ../templates/paperless_docker_compose_env.j2
       dest: "{{ app_paperless.docker_compose_env_target }}"
       backup: true
       mode: 0640
-
-
 
 - name: deploy Docker Compose stack
   become: true
