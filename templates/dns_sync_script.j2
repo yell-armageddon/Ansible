@@ -12,7 +12,10 @@ curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_boo
 curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_navidrome.host}}" https://www.goip.de/setip?    
 {% endif %}
 
-
 {% if app_wekan.using  %}
 curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_wekan.host}}" https://www.goip.de/setip?    
+{% endif %}
+
+{% if app_abs.using  %}
+curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_abs.host}}" https://www.goip.de/setip?    
 {% endif %}

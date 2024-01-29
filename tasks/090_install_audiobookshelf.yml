@@ -1,0 +1,44 @@
+- name: Add the user abs
+  become: true  
+  ansible.builtin.user:
+    name: "{{usernames.abs}}"
+    comment: abs docker user
+    uid: 1290
+    group: docker
+
+- name: Create folder {{dockerpath}}/abs
+  become: true
+  ansible.builtin.file:
+    path: "{{dockerpath}}/abs"
+    state: directory
+    owner: "{{usernames.abs}}"  
+    group : docker 
+
+- name: create subfolders
+  become: true
+  become_user: "{{usernames.abs}}"
+  ansible.builtin.file:
+      path: "{{item.src}}"
+      state: directory
+      #mode: '0755'
+  loop:
+      - {src: "{{dockerpath}}/abs/config"}
+      - {src: "{{dockerpath}}/abs/metadata"}
+
+
+- name: Ensure docker compose config in place
+  become: true
+  become_user:  "{{usernames.abs}}"
+  template:
+    src: ../templates/audiobookshelf_docker_compose.j2
+    dest: "{{ app_abs.docker_compose_target }}"
+    backup: true
+    mode: 0640
+
+- name: deploy Docker Compose stack
+  become: true
+  become_user:  "{{usernames.abs}}"
+  community.docker.docker_compose:
+    project_src: "/home/{{usernames.abs}}"
+    files:
+     - docker-compose.yml 
