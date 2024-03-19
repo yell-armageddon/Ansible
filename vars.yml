@@ -151,7 +151,7 @@ app_paperless:
   database_user: "paperless"
   database_password: "MyDatabasePassword"
   PAPERLESS_SECRET_KEY: MyPAPERLESSSECRETKEY
-  data_dir: 
+  media_dir: /my/media/dir
 
 app_homer:
   user: homer
