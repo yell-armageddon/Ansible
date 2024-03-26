@@ -1,0 +1,9 @@
+- hosts: myvhosts
+  vars_files:
+    - "{{ansible_vault}}/vars.yml"
+
+
+  tasks:
+  - name: Setup teddycloud
+    ansible.builtin.include_tasks:
+      file: ../tasks/085_install_teddycloud.yml

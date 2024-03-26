@@ -77,8 +77,11 @@ usernames:
   bookstack: bookstack
   syncthing: syncthing
   pihole: pihole
-  portainer: portainer
-
+  navidrome: navidrome
+  abs: abs
+  wekan: wekan
+  teddycloud: teddycloud
+  
 app_nginx:
   user: nginx
   docker_compose_target: "/home/{{usernames.nginx}}/docker-compose.yml"
@@ -125,3 +128,25 @@ app_pihole:
 app_portainer:
   using: true
   docker_compose_target:  /home/{{usernames.portainer}}/docker-compose.yml
+
+
+app_navidrome:
+  using: true
+  host: navidrome.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.navidrome}}/docker-compose.yml
+
+
+app_wekan:
+  using: true
+  host: wekan.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.wekan}}/docker-compose.yml
+
+app_abs:
+  using: true
+  host: abs.{{dns.host}}
+  docker_compose_target:  /home/{{usernames.abs}}/docker-compose.yml
+
+app_teddycloud:
+  using: true
+  docker_compose_target: /home/{{usernames.teddycloud}}/docker-compose.yml
+  network_device: eth0

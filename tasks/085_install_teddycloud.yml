@@ -1,0 +1,59 @@
+- name: Add the user teddycloud
+  become: true  
+  ansible.builtin.user:
+    name: "{{usernames.teddycloud}}"
+    comment: teddycloud docker user
+    uid: 1285
+    group: docker
+
+- name: Create folder {{dockerpath}}/teddycloud
+  become: true
+  ansible.builtin.file:
+    path: "{{dockerpath}}/teddycloud"
+    state: directory
+    owner: "{{usernames.teddycloud}}"  
+    group : docker 
+
+- name: Create folder {{dockerpath}}/teddycloud
+  become: true
+  ansible.builtin.file:
+      path: "{{dockerpath}}/teddycloud"
+      state: directory
+      owner: "{{usernames.teddycloud}}"  
+      group : docker 
+  
+- name: create subfolders
+  become: true
+  become_user: "{{usernames.teddycloud}}"
+  ansible.builtin.file:
+      path: "{{item.src}}"
+      state: directory
+      #mode: '0755'
+  loop:
+      - {src: "{{dockerpath}}/teddycloud/certs"}
+      - {src: "{{dockerpath}}/teddycloud/config"}
+      - {src: "{{dockerpath}}/teddycloud/data/content"}
+      - {src: "{{dockerpath}}/teddycloud/data/library"}
+      - {src: "{{dockerpath}}/teddycloud/data/firmware"}
+
+
+- name: Ensure docker compose config in place
+  become: true
+  become_user: "{{usernames.teddycloud}}"
+  template:
+      src: ../templates/teddycloud_docker_compose.j2
+      dest: "{{ app_teddycloud.docker_compose_target }}"
+      backup: true
+      mode: 0640
+
+
+- name: deploy Docker Compose stack
+  become: true
+  become_user:  "{{usernames.teddycloud}}"
+  community.docker.docker_compose:
+    project_src: "/home/{{usernames.teddycloud}}"
+    files:
+    - docker-compose.yml
+
+
+

@@ -1,0 +1,46 @@
+version: '3'
+services:
+  teddycloud:
+    container_name: teddycloud
+    mac_address: 66-66-66-00-00-01  # random 
+    #dns:                                                   
+    #  - "192.168.178.1"
+    # - "192.168.178.132" pi-hole adress
+    networks:
+      dockervlan:    
+        ipv4_address: 192.168.178.138   # set your own IP-Adress 
+    hostname: teddycloud
+    domainname: fritz.box                       # set your own domain
+    image: ghcr.io/toniebox-reverse-engineering/teddycloud:latest
+    ports:
+      - 80:80 #optional
+      - 443:443 #Port is needed for the connection for the box
+    volumes:
+      - {{dockerpath}}/teddycloud/certs:/teddycloud/certs
+      - {{dockerpath}}/teddycloud/config:/teddycloud/config
+      - {{dockerpath}}/teddycloud/data/content:/teddycloud/data/content 
+      - {{dockerpath}}/teddycloud/data/library:/teddycloud/data/library
+      - {{dockerpath}}/teddycloud/data/firmware:/teddycloud/data/firmware
+    restart: unless-stopped
+    environment:
+     - TZ=Europe/Berlin
+    cap_add:
+      - NET_ADMIN
+
+volumes:
+  certs:
+  config:
+  content:
+  library:
+  firmware:
+networks:
+  dockervlan:
+    name: dockervlan
+    driver: macvlan
+    driver_opts:
+      parent: {{app_teddycloud.network_device}}
+    ipam: 
+      config:
+        - subnet: "192.168.178.0/24"      # change it to your own network address!
+ #         ip_range: "192.168.178.100/26"  # change it to your own network address!
+          gateway: "192.168.178.1"        # change it to your own network address!
