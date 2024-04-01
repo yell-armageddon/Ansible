@@ -81,7 +81,11 @@ usernames:
   abs: abs
   wekan: wekan
   teddycloud: teddycloud
-  
+  mealie: mealie
+  immich: immich
+
+timezone: Europe/Berlin
+
 app_nginx:
   user: nginx
   docker_compose_target: "/home/{{usernames.nginx}}/docker-compose.yml"
@@ -150,3 +154,10 @@ app_teddycloud:
   using: true
   docker_compose_target: /home/{{usernames.teddycloud}}/docker-compose.yml
   network_device: eth0
+
+app_mealie:
+  using: true
+  host: mealie.{{dns.host}}
+  database_user: mealie
+  database_password: 12346!secretpw
+  docker_compose_target: /home/{{usernames.mealie}}/docker-compose.yml

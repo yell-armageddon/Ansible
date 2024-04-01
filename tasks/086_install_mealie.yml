@@ -1,0 +1,62 @@
+- name: Add the user mealie
+  become: true  
+  ansible.builtin.user:
+    name: "{{usernames.mealie}}"
+    comment: mealie docker user
+    uid: 1286
+    group: docker
+
+- name: Create folder {{dockerpath}}/mealie
+  become: true
+  ansible.builtin.file:
+    path: "{{dockerpath}}/mealie"
+    state: directory
+    owner: "{{usernames.mealie}}"  
+    group : docker 
+
+- name: Create folder {{dockerpath}}/mealie
+  become: true
+  ansible.builtin.file:
+      path: "{{dockerpath}}/mealie"
+      state: directory
+      owner: "{{usernames.mealie}}"  
+      group : docker 
+  
+- name: create subfolders
+  become: true
+  become_user: "{{usernames.mealie}}"
+  ansible.builtin.file:
+      path: "{{item.src}}"
+      state: directory
+      #mode: '0755'
+  loop:
+      - {src: "{{dockerpath}}/mealie/data"}
+      - {src: "{{dockerpath}}/mealie/db"}
+
+
+
+- name: Ensure docker compose config in place
+  become: true
+  become_user: "{{usernames.mealie}}"
+  template:
+      src: ../templates/mealie_docker_compose.j2
+      dest: "{{ app_mealie.docker_compose_target }}"
+      backup: true
+      mode: 0640
+
+- name: Create a network net_mealie
+  become: true
+  become_user: "{{usernames.mealie}}"
+  docker_network:
+    name: net_mealie
+
+- name: deploy Docker Compose stack
+  become: true
+  become_user:  "{{usernames.mealie}}"
+  community.docker.docker_compose:
+    project_src: "/home/{{usernames.mealie}}"
+    files:
+    - docker-compose.yml
+
+
+

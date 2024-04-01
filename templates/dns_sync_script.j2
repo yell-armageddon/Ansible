@@ -19,3 +19,7 @@ curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_wek
 {% if app_abs.using  %}
 curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_abs.host}}" https://www.goip.de/setip?    
 {% endif %}
+
+{% if app_mealie.using  %}
+curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_mealie.host}}" https://www.goip.de/setip?    
+{% endif %}

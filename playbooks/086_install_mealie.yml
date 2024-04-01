@@ -1,0 +1,9 @@
+- hosts: myvhosts
+  vars_files:
+    - "{{ansible_vault}}/vars.yml"
+
+
+  tasks:
+  - name: Setup mealie
+    ansible.builtin.include_tasks:
+      file: ../tasks/086_install_mealie.yml
