@@ -1,0 +1,3 @@
+#!/bin/bash
+DOW=$(date +%u)
+docker exec -t immich_postgres pg_dumpall --clean --if-exists --username=postgres | gzip > {{dockerpath}}/immich/backup/backup_dow_${DOW}.sql 2>&1

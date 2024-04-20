@@ -1,0 +1,80 @@
+- name: Add the user immich
+  become: true  
+  ansible.builtin.user:
+    name: "{{usernames.immich}}"
+    comment: immich docker user
+    uid: 1287
+    group: docker
+
+- name: Create folder {{dockerpath}}/immich
+  become: true
+  ansible.builtin.file:
+    path: "{{dockerpath}}/immich"
+    state: directory
+    owner: "{{usernames.immich}}"  
+    group : docker 
+
+  
+- name: create subfolders
+  become: true
+  become_user: "{{usernames.immich}}"
+  ansible.builtin.file:
+      path: "{{item.src}}"
+      state: directory
+      #mode: '0755'
+  loop:
+      - {src: "{{dockerpath}}/immich/upload"}
+      - {src: "{{dockerpath}}/immich/backup"}
+      - {src: "{{dockerpath}}/immich/pgdata"}
+      - {src: "{{dockerpath}}/immich/model-cache"}
+
+- name: Ensure docker compose config in place
+  become: true
+  become_user: "{{usernames.immich}}"
+  template:
+      src: ../templates/immich/docker-compose.j2
+      dest: "{{ app_immich.docker_compose_target }}"
+      backup: true
+      mode: 0640
+
+- name: Ensure .env config in place
+  become: true
+  become_user: "{{usernames.immich}}"
+  template:
+      src: ../templates/immich/env.j2
+      dest: "{{ app_immich.env_target }}"
+      backup: true
+      mode: 0640
+
+- name: Create a network net_immich
+  become: true
+  become_user: "{{usernames.immich}}"
+  docker_network:
+    name: net_immich
+
+- name: deploy Docker Compose stack
+  become: true
+  become_user:  "{{usernames.immich}}"
+  community.docker.docker_compose:
+    project_src: "/home/{{usernames.immich}}"
+    files:
+    - docker-compose.yml
+
+- name: Ensure the database backup script is inplace
+  become: true
+  become_user:  "{{usernames.immich}}"
+  template:
+    src: ../templates/immich/db_backup.j2
+    dest: "{{dockerpath}}/immich/db_backup.sh"
+    backup: true
+    mode: 0750
+
+- name: schedule a database backup every night
+  become: true      
+  ansible.builtin.cron:
+    name: "check dirs"
+    minute: "5"
+    hour: "3"
+    job: "{{dockerpath}}/immich/db_backup.sh"
+    cron_file: ansible_immich
+    user: root

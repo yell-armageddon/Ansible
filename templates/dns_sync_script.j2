@@ -23,3 +23,7 @@ curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_abs
 {% if app_mealie.using  %}
 curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_mealie.host}}" https://www.goip.de/setip?    
 {% endif %}
+
+{% if app_immich.using  %}
+curl --data "username={{dns.user}}&password={{dns.password}}&subdomain={{app_immich.host}}" https://www.goip.de/setip?    
+{% endif %}
