@@ -71,6 +71,15 @@ services:
   - name: "Applications"
     icon: "fas fa-cloud"
     items:
+
+      - name: "AudioBookShelf"
+        logo: "assets/icons/abs.png"
+        subtitle: ""
+        tag: "app"
+        keywords: "AudioBookShelf"
+        url: "https://abs.{{dns.host}}"
+        target: "_blank" # optional html a tag target attribute
+
       - name: "Bookstack"
         logo: "assets/icons/bookstack.png"
         subtitle: ""
@@ -85,6 +94,22 @@ services:
         tag: "app"
         keywords: "Nextcloud"
         url: "https://nextcloud.{{dns.host}}"
+        target: "_blank" # optional html a tag target attribute
+
+      - name: "Immich"
+        logo: "assets/icons/immich.png"
+        subtitle: ""
+        tag: "app"
+        keywords: "Immich"
+        url: "https://immich.{{dns.host}}"
+        target: "_blank" # optional html a tag target attribute
+
+      - name: "Mealie"
+        logo: "assets/icons/mealie.jpg"
+        subtitle: ""
+        tag: "app"
+        keywords: "Mealie Recipes"
+        url: "https://mealie.{{dns.host}}"
         target: "_blank" # optional html a tag target attribute
 
       - name: "Magic"
@@ -118,6 +143,15 @@ services:
         keywords: "wekan kanban"
         url: "http://wekan.{{dns.host}}"
         target: "_blank" # optional html a tag target attribute
+
+      - name: "qBittorrent"
+        logo: "assets/icons/qb.jpg"
+        subtitle: ""
+        tag: "app"
+        keywords: "qbittorrent"
+        url: "http://{{qbittorrent}}"
+        target: "_blank" # optional html a tag target attribute
+
 
   - name: "Management"
     icon: "fas fa-cloud"
